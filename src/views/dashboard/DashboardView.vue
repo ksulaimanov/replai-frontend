@@ -1,112 +1,361 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
-const router = useRouter()
+const userName = ref('Имя')
 
-const menuItems = [
-  { id: 'dashboard', label: 'Дашборд', icon: 'dashboard', active: false },
-  { id: 'automation', label: 'Автоматизация', icon: 'automation', active: true },
-  { id: 'integrations', label: 'Интеграции', icon: 'integrations', active: false },
-  { id: 'test-ai', label: 'Тест AI', icon: 'test-ai', active: false }
-]
+const stats = {
+  activeDialogs: 167,
+  leads: 324,
+  channels: 2
+}
+
+const recentChats = ref([
+  { channel: 'Telegram', client: '@alex_business', message: 'Здравствуйте, можно узнать стоимость тарифов?', time: '2 мин назад' },
+  { channel: 'WhatsApp', client: '+996 700 123 456', message: 'AI помог подобрать подходящий тариф, спасибо!', time: '15 мин назад' },
+  { channel: 'Telegram', client: '@digital_store', message: 'Можно подключить Telegram и WhatsApp одновременно?', time: '1 ч назад' },
+  { channel: 'WhatsApp', client: '+996 555 987 321', message: '/start', time: '3 ч назад' }
+])
 </script>
 
 <template>
-  <div class="dashboard-page relative w-full min-h-screen bg-white overflow-hidden font-['Inter']">
-    <div class="absolute w-[531px] h-[307.5px] left-[183px] top-[806.5px] bg-[#D7D3F6] blur-[50px] pointer-events-none"></div>
-    <div class="absolute w-[179px] h-[337px] left-[658px] top-[942px] bg-[#42008A] blur-[50px] pointer-events-none"></div>
+  <div class="dashboard-page min-h-screen bg-white text-[#111827] font-['Inter']">
+    <div class="dashboard-shell relative">
+      <aside class="sidebar hidden lg:block fixed left-4 top-4 bottom-4 w-[232px] z-20">
+        <div class="sidebar-card bg-[#D7D3F6] rounded-[14px] h-full p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-start gap-3 mb-6">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/><path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/></svg>
+              <div>
+                <div class="text-[20px] font-semibold text-[#42008A] leading-[1.2]">REPLAI</div>
+                <div class="text-[12px] text-[#424754] leading-[1.3]">Управление с помощью ИИ</div>
+              </div>
+            </div>
 
-    <aside class="dashboard-menu absolute left-[10px] top-1/2 -translate-y-1/2 w-[232px] h-[799px] bg-[#D7D3F6] rounded-[14px] px-[20px] py-[36px]">
-      <div class="flex items-start gap-[10px] mb-[46px]">
-        <svg class="mt-[2px]" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
-          <path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/>
-        </svg>
-        <div>
-          <div class="text-[24px] font-semibold leading-[29px] text-[#42008A]">REPLAI</div>
-          <div class="mt-[2px] text-[12px] font-semibold leading-[16px] tracking-[0.24px] text-[#424754]">Управление с помощью ИИ</div>
+            <nav class="mt-6 flex flex-col gap-3">
+              <RouterLink to="/dashboard" class="block outline-none" active-class="" exact-active-class="">
+                <button class="menu-btn menu-btn--active">
+                  <img src="/dashboard.png" alt="dashboard" class="menu-icon" />
+                  <span class="font-semibold">Дашборд</span>
+                </button>
+              </RouterLink>
+
+              <RouterLink to="/automation" class="block outline-none">
+                <button class="menu-btn menu-btn--ghost">
+                  <img src="/automation.png" alt="automation" class="menu-icon" />
+                  <span class="font-semibold">Автоматизация</span>
+                </button>
+              </RouterLink>
+
+              <RouterLink to="/integrations" class="block outline-none">
+                <button class="menu-btn menu-btn--ghost">
+                  <img src="/integration.png" alt="integrations" class="menu-icon menu-icon--wide" />
+                  <span class="font-semibold">Интеграции</span>
+                </button>
+              </RouterLink>
+
+              <RouterLink to="/test-ai" class="block outline-none">
+                <button class="menu-btn menu-btn--ghost">
+                  <img src="/testai.png" alt="test ai" class="menu-icon menu-icon--wide" />
+                  <span class="font-semibold">Тест AI</span>
+                </button>
+              </RouterLink>
+            </nav>
+          </div>
         </div>
-      </div>
+      </aside>
 
-      <nav class="flex flex-col gap-[17px]">
-        <button
-          v-for="item in menuItems"
-          :key="item.id"
-          type="button"
-          class="menu-item relative w-full text-left h-[47px] rounded-[10px] flex items-center"
-          :class="item.active ? 'bg-[linear-gradient(180deg,rgba(66,0,138,0.8)_0%,rgba(17,0,36,0.8)_100%)] text-white' : 'bg-transparent text-[#42008A]'"
-        >
-          <span class="menu-icon absolute left-[14px]" :class="item.active ? 'opacity-100' : 'opacity-100'">
-            <svg v-if="item.icon === 'dashboard'" width="29" height="35" viewBox="0 0 29 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="4" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/>
-              <rect x="17" y="4" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="2"/>
-              <rect x="3" y="18" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="2"/>
-              <rect x="17" y="18" width="9" height="13" rx="1.5" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <svg v-else-if="item.icon === 'automation'" width="30" height="35" viewBox="0 0 30 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="15" cy="17" r="10" stroke="currentColor" stroke-width="2.2"/>
-              <path d="M15 9V12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M15 22V25" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M7 17H10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M20 17H23" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9.5 11.5L11.5 13.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M18.5 20.5L20.5 22.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M9.5 22.5L11.5 20.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M18.5 13.5L20.5 11.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-              <circle cx="15" cy="17" r="3" fill="currentColor"/>
-            </svg>
-            <svg v-else-if="item.icon === 'integrations'" width="29" height="58" viewBox="0 0 29 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="5" y="13" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-              <path d="M14.5 1V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M14.5 35V43" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M2 22.5H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M19 22.5H27" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6.5 6.5L9.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M19.5 6.5L16.5 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M6.5 38.5L9.5 35.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M19.5 38.5L16.5 35.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <svg v-else width="29" height="33" viewBox="0 0 29 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="4" width="17" height="24" rx="2" stroke="currentColor" stroke-width="2"/>
-              <path d="M10 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M19 2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10 18H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="pl-[48px] text-[14px] font-semibold leading-[16px] tracking-[0.24px]">{{ item.label }}</span>
-        </button>
-      </nav>
-    </aside>
+      <main class="main-content relative z-10 ml-0 lg:ml-[264px] p-4 lg:p-8 xl:pr-16 w-full lg:w-auto overflow-hidden">
+        <div class="decor-ellipse hidden" aria-hidden="true"></div>
 
-    <main class="dashboard-content ml-[242px] min-h-screen flex items-center justify-center px-8 py-8">
-      <div class="text-center max-w-[480px]">
-        <h1 class="text-[40px] font-semibold text-[#42008A] mb-4">Автоматизация</h1>
-        <p class="text-[18px] text-[#424754]">Страница дашборда подготовлена по макету. Здесь можно разместить виджеты, статистику и блоки управления.</p>
-      </div>
-    </main>
+        <div class="header-row flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <div class="text-[18px] font-semibold text-[#424754] leading-[1.2]">С возвращением, {{ userName }}</div>
+            <h1 class="text-[32px] font-semibold text-[#42008A] mt-4 leading-[1.1]">Дашборд</h1>
+          </div>
+
+          <div class="header-actions flex items-center gap-4 flex-wrap justify-end">
+            <button class="action-btn">+ Протестировать AI</button>
+            <button class="action-btn">+ Подключить канал</button>
+            <button class="action-btn">+ Новый сценарий</button>
+            <div class="w-10 h-10 rounded-full bg-[#f0f0f4] flex items-center justify-center ml-2 shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3" stroke="#424754" stroke-width="1.5"/><path d="M4 20c1.5-4 14-4 16 0" stroke="#424754" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div class="stat-card">
+            <div class="stat-title">Активные диалоги</div>
+            <div class="stat-value">{{ stats.activeDialogs }}</div>
+            <div class="stat-note">+12% за неделю</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Квалифицированные лиды</div>
+            <div class="stat-value">{{ stats.leads }}</div>
+            <div class="stat-note">AI определил высокий интерес</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Активные каналы</div>
+            <div class="stat-value">{{ stats.channels }}</div>
+            <div class="stat-note">Telegram, WhatsApp</div>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <h2 class="text-[20px] font-medium mb-4">Недавние чаты</h2>
+
+          <div class="recent-table bg-[#F3F1FD] rounded-[15px] overflow-hidden w-full overflow-x-auto relative">
+            <div class="absolute w-[200px] h-[300px] rounded-full left-[250px] top-1/2 -translate-y-1/2 bg-[linear-gradient(180deg,rgba(215,211,246,0.5)_0%,rgba(66,0,138,0.05)_100%)] blur-[40px] pointer-events-none hidden"></div>
+            <div class="min-w-[800px]">
+              <div class="table-head bg-[rgba(189,165,213,0.7)] px-6 py-4 text-[18px] font-medium text-black grid grid-cols-[140px_200px_1fr_120px] gap-4">
+                <div>Каналы</div>
+                <div>Клиенты</div>
+                <div>Последние сообщения</div>
+                <div class="text-right">Время</div>
+              </div>
+
+              <div class="px-6 py-2 bg-[rgba(238,233,250,0.5)]">
+                <div v-for="(chat, idx) in recentChats" :key="idx" class="chat-row grid grid-cols-[140px_200px_1fr_120px] gap-4 items-center py-6 border-b border-[rgba(202,185,224,0.4)] last:border-b-0 relative z-10">
+                  <div>
+                    <span :class="['channel-pill inline-block py-1 px-4 rounded-[16px] text-white text-[14px]', chat.channel === 'WhatsApp' ? 'bg-[#7E57C2]' : 'bg-[#7E57C2]']">
+                      {{ chat.channel }}
+                    </span>
+                  </div>
+                  <div class="text-[14px] text-[#555] break-words">{{ chat.client }}</div>
+                  <div class="text-[14px] break-words min-w-0 text-[#222]">{{ chat.message }}</div>
+                  <div class="text-[14px] text-right whitespace-nowrap text-[#555]">{{ chat.time }}</div>
+                </div>
+              </div>
+
+              <div class="px-6 py-6 text-center text-[#42008A] font-semibold text-[14px] cursor-pointer hover:underline bg-[rgba(238,233,250,0.5)] relative z-10">Посмотреть все диалоги →</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.dashboard-page {
+  overflow-x: hidden;
+}
+
+.sidebar-card {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.menu-btn {
+  width: 100%;
+  min-height: 47px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  text-align: left;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.router-link-active .menu-btn--ghost {
+  background: transparent !important;
+}
+
+.menu-btn--active {
+  background: linear-gradient(180deg, rgba(66, 0, 138, 0.8) 0%, rgba(17, 0, 36, 0.8) 100%);
+  color: #FFFFFF;
+}
+
+.menu-btn--ghost {
+  color: #42008A;
+  background: transparent;
+}
+
+.menu-btn--ghost:hover {
+  background: rgba(66, 0, 138, 0.05);
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.menu-icon--wide {
+  width: 32px;
+  height: 32px;
+}
+
+.action-btn {
+  background: #42008A;
+  color: #FFFFFF;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.stat-card {
+  min-height: 189px;
+  border-radius: 15px;
+  padding: 28px 32px;
+  background: linear-gradient(119.01deg, #D7D3F6 32.05%, rgba(66, 0, 138, 0.69) 92.25%);
+}
+
+.stat-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000;
+}
+
+.stat-value {
+  margin-top: 28px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #000;
+}
+
+.stat-note {
+  margin-top: 36px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #42008A;
+}
+
+.channel-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: rgba(66, 0, 138, 0.69);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.decor-ellipse {
+  position: absolute;
+  left: 220px;
+  top: 520px;
+  width: 180px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(215, 211, 246, 0.55);
+  pointer-events: none;
+}
+
+@media (max-width: 1280px) {
+  .main-content {
+    padding-right: 24px;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 1024px) {
-  .dashboard-page {
-    min-height: 100vh;
+  .dashboard-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sidebar {
+    position: relative !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: auto !important;
+    width: calc(100% - 32px) !important;
+    margin: 16px 16px 0 16px;
+    height: auto !important;
+  }
+
+  .sidebar-card {
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 0 16px 16px 16px !important;
+  }
+
+  .header-row {
+    align-items: stretch;
+  }
+
+  .header-actions {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .recent-table {
     overflow-x: auto;
   }
 
-  .dashboard-menu {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    transform: none;
-    height: calc(100vh - 20px);
-    z-index: 10;
+  .table-head,
+  .chat-row {
+    min-width: 760px;
   }
 
-  .dashboard-content {
-    margin-left: 252px;
-    min-width: 900px;
+  .decor-ellipse {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    margin: 12px 12px 0 12px;
+  }
+
+  .menu-btn {
+    min-height: 44px;
+  }
+
+  .menu-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .stat-card {
+    padding: 22px 20px;
+    min-height: 160px;
+  }
+
+  .stat-title {
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    margin-top: 18px;
+  }
+
+  .stat-note {
+    font-size: 14px;
+    margin-top: 24px;
+  }
+
+  .recent-table {
+    border-radius: 12px;
+  }
+
+  .decor-ellipse {
+    display: none !important;
   }
 }
 </style>

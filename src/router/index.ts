@@ -29,8 +29,26 @@ const router = createRouter({
             name: 'dashboard',
             component: () => import('../views/dashboard/DashboardView.vue'),
             meta: {
-                requiresAuth: true
+                requiresAuth: false
             }
+        },
+        {
+            path: '/automation',
+            name: 'automation',
+            component: () => import('../views/dashboard/AutomationView.vue'),
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/integrations',
+            name: 'integrations',
+            component: () => import('../views/dashboard/IntegrationsView.vue'),
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/test-ai',
+            name: 'test-ai',
+            component: () => import('../views/dashboard/TestAIView.vue'),
+            meta: { requiresAuth: false }
         }
     ]
 })
