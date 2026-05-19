@@ -13,21 +13,33 @@ const confirmPassword = ref('')
 const isPasswordVisible = ref(false)
 const isConfirmPasswordVisible = ref(false)
 const isLoading = ref(false)
+const errorMessage = ref('')
 
 const handleRegister = async () => {
-  if (!email.value || !password.value || password.value !== confirmPassword.value) return
+  if (!email.value || !password.value || password.value !== confirmPassword.value) {
+    errorMessage.value = password.value !== confirmPassword.value ? 'Пароли не совпадают' : 'Заполните обязательные поля'
+    return
+  }
 
   try {
     isLoading.value = true
+    errorMessage.value = ''
     const response = await authApi.register({
       companyName: companyName.value,
       email: email.value,
       password: password.value
     })
-    localStorage.setItem('token', response.token)
-    router.push('/dashboard')
+
+    const verificationEmail = response.user?.email || email.value
+    sessionStorage.setItem('verificationEmail', verificationEmail)
+    router.push({
+      path: '/verify-email',
+      query: {
+        email: verificationEmail
+      }
+    })
   } catch (error) {
-    console.error(error)
+    errorMessage.value = error instanceof Error ? error.message : 'Ошибка регистрации'
   } finally {
     isLoading.value = false
   }
@@ -36,10 +48,7 @@ const handleRegister = async () => {
 
 <template>
   <AuthLayout>
-    <!-- Белый блок формы -->
     <div class="w-full bg-white shadow-[5px_5px_4px_rgba(0,0,0,0.09)] rounded-[30px] p-6 sm:p-10 lg:w-[558px] lg:h-[691px] flex flex-col items-center justify-center relative mx-auto">
-
-      <!-- Логотип со звездочками AI -->
       <div class="flex items-center justify-center gap-[4px]">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
@@ -48,15 +57,11 @@ const handleRegister = async () => {
         <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">REPLAI</span>
       </div>
 
-      <!-- Создайте свой аккаунт -->
       <p class="text-[16px] font-normal text-[#000000] leading-[19px] text-center mt-[11px] mb-[30px] w-full">
         Создайте свой аккаунт
       </p>
 
-      <!-- Форма (ширина 453px по фигме) -->
       <form @submit.prevent="handleRegister" class="flex flex-col w-full max-w-[453px]">
-
-        <!-- Название компании -->
         <div class="flex flex-col mb-[16px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Название компании</label>
           <input
@@ -67,7 +72,6 @@ const handleRegister = async () => {
           />
         </div>
 
-        <!-- Email -->
         <div class="flex flex-col mb-[16px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Email Adress</label>
           <input
@@ -78,7 +82,6 @@ const handleRegister = async () => {
           />
         </div>
 
-        <!-- Password -->
         <div class="flex flex-col relative mb-[16px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Password</label>
           <div class="relative w-full">
@@ -99,8 +102,7 @@ const handleRegister = async () => {
           </div>
         </div>
 
-        <!-- Confirm password -->
-        <div class="flex flex-col relative mb-[30px]">
+        <div class="flex flex-col relative mb-[14px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Confirm password</label>
           <div class="relative w-full">
             <input
@@ -120,7 +122,10 @@ const handleRegister = async () => {
           </div>
         </div>
 
-        <!-- Кнопка Создать аккаунт -->
+        <p v-if="errorMessage" class="mb-[16px] text-[14px] text-[#b91c1c]">
+          {{ errorMessage }}
+        </p>
+
         <button
             type="submit"
             :disabled="isLoading"
@@ -129,7 +134,6 @@ const handleRegister = async () => {
           {{ isLoading ? 'Загрузка...' : 'Создать аккаунт' }}
         </button>
 
-        <!-- Уже есть аккаунт? -->
         <div class="flex justify-center gap-1 mt-[25px]">
           <span class="text-[16px] font-normal text-[#000000] leading-[19px]">Уже есть аккаунт?</span>
           <RouterLink to="/login" class="text-[16px] font-normal text-[#42008A] leading-[19px] hover:underline">Войти</RouterLink>

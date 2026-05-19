@@ -10,20 +10,43 @@ const email = ref('')
 const password = ref('')
 const isPasswordVisible = ref(false)
 const isLoading = ref(false)
+const errorMessage = ref('')
+
+const goToVerification = (verificationEmail: string) => {
+  sessionStorage.setItem('verificationEmail', verificationEmail)
+  router.push({
+    path: '/verify-email',
+    query: {
+      email: verificationEmail
+    }
+  })
+}
 
 const handleLogin = async () => {
   if (!email.value || !password.value) return
 
   try {
     isLoading.value = true
+    errorMessage.value = ''
     const response = await authApi.login({
       email: email.value,
       password: password.value
     })
-    localStorage.setItem('token', response.token)
-    router.push('/dashboard')
+
+    if (response.token) {
+      localStorage.setItem('token', response.token)
+      router.push('/dashboard')
+      return
+    }
+
+    goToVerification(response.user?.email || email.value)
   } catch (error) {
-    console.error(error)
+    const message = error instanceof Error ? error.message : 'Ошибка авторизации'
+    errorMessage.value = message
+
+    if (message.toLowerCase().includes('verify') || message.toLowerCase().includes('подтверд')) {
+      goToVerification(email.value)
+    }
   } finally {
     isLoading.value = false
   }
@@ -32,10 +55,7 @@ const handleLogin = async () => {
 
 <template>
   <AuthLayout>
-    <!-- Белый блок формы -->
     <div class="w-full bg-white shadow-[5px_5px_4px_rgba(0,0,0,0.09)] rounded-[30px] p-6 sm:p-10 lg:w-[558px] lg:h-[538px] flex flex-col items-center justify-center relative mx-auto">
-
-      <!-- Логотип со звездочками AI -->
       <div class="flex items-center justify-center gap-[4px]">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
@@ -44,15 +64,11 @@ const handleLogin = async () => {
         <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">REPLAI</span>
       </div>
 
-      <!-- Введите ваши данные... -->
       <p class="text-[16px] font-normal text-[#000000] leading-[19px] text-center mt-[11px] mb-[40px] w-full max-w-[336px]">
         Введите ваши данные для входа в аккаунт
       </p>
 
-      <!-- Форма (ширина 453px по фигме) -->
       <form @submit.prevent="handleLogin" class="flex flex-col w-full max-w-[453px]">
-
-        <!-- Email -->
         <div class="flex flex-col mb-[25px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Email Adress</label>
           <input
@@ -63,8 +79,7 @@ const handleLogin = async () => {
           />
         </div>
 
-        <!-- Password -->
-        <div class="flex flex-col relative mb-[30px]">
+        <div class="flex flex-col relative mb-[12px]">
           <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Password</label>
           <div class="relative w-full">
             <input
@@ -73,8 +88,6 @@ const handleLogin = async () => {
                 placeholder="Введите пароль"
                 class="w-full h-[54px] bg-[rgba(173,173,173,0.2)] rounded-[10px] px-4 pr-12 text-[16px] font-normal outline-none focus:border focus:border-[#42008A] transition-colors placeholder:text-[rgba(66,71,84,0.5)] text-[#000000]"
             />
-
-            <!-- Глаз -->
             <button
                 type="button"
                 @click="isPasswordVisible = !isPasswordVisible"
@@ -85,13 +98,15 @@ const handleLogin = async () => {
             </button>
           </div>
 
-          <!-- Забыли пароль? -->
           <div class="flex justify-end mt-[10px]">
             <a href="#" class="text-[16px] font-normal text-[#42008A] leading-[19px] hover:underline">Забыли пароль?</a>
           </div>
         </div>
 
-        <!-- Кнопка Войти -->
+        <p v-if="errorMessage" class="mb-[16px] text-[14px] text-[#b91c1c]">
+          {{ errorMessage }}
+        </p>
+
         <button
             type="submit"
             :disabled="isLoading"
@@ -100,7 +115,6 @@ const handleLogin = async () => {
           {{ isLoading ? 'Загрузка...' : 'Войти' }}
         </button>
 
-        <!-- Нет аккаунта? -->
         <div class="flex justify-center gap-1 mt-[25px]">
           <span class="text-[16px] font-normal text-[#000000] leading-[19px]">Нет аккаунта?</span>
           <RouterLink to="/register" class="text-[16px] font-normal text-[#42008A] leading-[19px] hover:underline">Зарегистрироваться</RouterLink>

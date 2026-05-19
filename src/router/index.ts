@@ -20,11 +20,27 @@ const router = createRouter({
             component: () => import('../views/auth/RegisterView.vue')
         },
         {
+            path: '/verify-email',
+            name: 'verify-email',
+            component: () => import('../views/auth/VerifyEmailView.vue')
+        },
+        {
             path: '/dashboard',
             name: 'dashboard',
-            component: { template: '<div class="p-10 text-2xl">Dashboard (в разработке)</div>' }
+            component: () => import('../views/dashboard/DashboardView.vue'),
+            meta: {
+                requiresAuth: true
+            }
         }
     ]
+})
+
+router.beforeEach((to) => {
+    if (to.meta.requiresAuth && !localStorage.getItem('token')) {
+        return '/login'
+    }
+
+    return true
 })
 
 export default router
