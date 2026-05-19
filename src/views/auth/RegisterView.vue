@@ -36,52 +36,62 @@ const handleRegister = async () => {
 
 <template>
   <AuthLayout>
-    <div class="bg-white rounded-[32px] p-10 w-full max-w-[480px] shadow-sm my-8">
-      <div class="flex flex-col items-center mb-10">
-        <div class="flex items-center gap-2 mb-3">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#31007E"/>
-            <path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#31007E"/>
-          </svg>
-          <span class="text-[24px] font-bold text-[#31007E] tracking-wide">REPLAI</span>
-        </div>
-        <p class="text-[#111111] text-[15px]">Создайте свой аккаунт</p>
+    <!-- Белый блок формы -->
+    <div class="w-full bg-white shadow-[5px_5px_4px_rgba(0,0,0,0.09)] rounded-[30px] p-6 sm:p-10 lg:w-[558px] lg:h-[691px] flex flex-col items-center justify-center relative mx-auto">
+
+      <!-- Логотип со звездочками AI -->
+      <div class="flex items-center justify-center gap-[4px]">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
+          <path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/>
+        </svg>
+        <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">REPLAI</span>
       </div>
 
-      <form @submit.prevent="handleRegister" class="flex flex-col gap-6">
-        <div class="flex flex-col gap-2.5">
-          <label class="text-[14px] font-medium text-[#111111]">Название компании</label>
+      <!-- Создайте свой аккаунт -->
+      <p class="text-[16px] font-normal text-[#000000] leading-[19px] text-center mt-[11px] mb-[30px] w-full">
+        Создайте свой аккаунт
+      </p>
+
+      <!-- Форма (ширина 453px по фигме) -->
+      <form @submit.prevent="handleRegister" class="flex flex-col w-full max-w-[453px]">
+
+        <!-- Название компании -->
+        <div class="flex flex-col mb-[16px]">
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Название компании</label>
           <input
               v-model="companyName"
               type="text"
               placeholder="Acme Ink."
-              class="w-full bg-[#F4F4F4] rounded-xl px-4 py-3.5 text-[15px] outline-none border border-transparent focus:border-[#31007E] transition-colors placeholder:text-[#A19DAA]"
+              class="w-full h-[54px] bg-[rgba(173,173,173,0.2)] rounded-[10px] px-4 text-[16px] font-normal outline-none focus:border focus:border-[#42008A] transition-colors placeholder:text-[rgba(66,71,84,0.5)] text-[#000000]"
           />
         </div>
 
-        <div class="flex flex-col gap-2.5">
-          <label class="text-[14px] font-medium text-[#111111]">Email Adress</label>
+        <!-- Email -->
+        <div class="flex flex-col mb-[16px]">
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Email Adress</label>
           <input
               v-model="email"
               type="email"
               placeholder="Введите email"
-              class="w-full bg-[#F4F4F4] rounded-xl px-4 py-3.5 text-[15px] outline-none border border-transparent focus:border-[#31007E] transition-colors placeholder:text-[#A19DAA]"
+              class="w-full h-[54px] bg-[rgba(173,173,173,0.2)] rounded-[10px] px-4 text-[16px] font-normal outline-none focus:border focus:border-[#42008A] transition-colors placeholder:text-[rgba(66,71,84,0.5)] text-[#000000]"
           />
         </div>
 
-        <div class="flex flex-col gap-2.5">
-          <label class="text-[14px] font-medium text-[#111111]">Password</label>
-          <div class="relative">
+        <!-- Password -->
+        <div class="flex flex-col relative mb-[16px]">
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Password</label>
+          <div class="relative w-full">
             <input
                 v-model="password"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 placeholder="Создайте пароль"
-                class="w-full bg-[#F4F4F4] rounded-xl px-4 py-3.5 text-[15px] outline-none border border-transparent focus:border-[#31007E] transition-colors pr-12 placeholder:text-[#A19DAA]"
+                class="w-full h-[54px] bg-[rgba(173,173,173,0.2)] rounded-[10px] px-4 pr-12 text-[16px] font-normal outline-none focus:border focus:border-[#42008A] transition-colors placeholder:text-[rgba(66,71,84,0.5)] text-[#000000]"
             />
             <button
                 type="button"
                 @click="isPasswordVisible = !isPasswordVisible"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-[#A19DAA] hover:text-[#31007E] transition-colors"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#42008A] transition-colors flex items-center justify-center h-full"
             >
               <svg v-if="!isPasswordVisible" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
@@ -89,19 +99,20 @@ const handleRegister = async () => {
           </div>
         </div>
 
-        <div class="flex flex-col gap-2.5">
-          <label class="text-[14px] font-medium text-[#111111]">Confirm password</label>
-          <div class="relative">
+        <!-- Confirm password -->
+        <div class="flex flex-col relative mb-[30px]">
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Confirm password</label>
+          <div class="relative w-full">
             <input
                 v-model="confirmPassword"
                 :type="isConfirmPasswordVisible ? 'text' : 'password'"
                 placeholder="Повторите пароль"
-                class="w-full bg-[#F4F4F4] rounded-xl px-4 py-3.5 text-[15px] outline-none border border-transparent focus:border-[#31007E] transition-colors pr-12 placeholder:text-[#A19DAA]"
+                class="w-full h-[54px] bg-[rgba(173,173,173,0.2)] rounded-[10px] px-4 pr-12 text-[16px] font-normal outline-none focus:border focus:border-[#42008A] transition-colors placeholder:text-[rgba(66,71,84,0.5)] text-[#000000]"
             />
             <button
                 type="button"
                 @click="isConfirmPasswordVisible = !isConfirmPasswordVisible"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-[#A19DAA] hover:text-[#31007E] transition-colors"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#42008A] transition-colors flex items-center justify-center h-full"
             >
               <svg v-if="!isConfirmPasswordVisible" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
@@ -109,19 +120,22 @@ const handleRegister = async () => {
           </div>
         </div>
 
+        <!-- Кнопка Создать аккаунт -->
         <button
             type="submit"
             :disabled="isLoading"
-            class="w-full bg-[#31007E] text-white rounded-xl py-4 text-[15px] font-medium hover:bg-[#4a00bf] transition-colors disabled:opacity-70 mt-2"
+            class="w-full h-[54px] bg-[#42008A] text-[#FFFFFF] rounded-[10px] text-[16px] font-medium leading-[19px] hover:bg-[#5a1a9f] transition-colors disabled:opacity-70 flex items-center justify-center"
         >
           {{ isLoading ? 'Загрузка...' : 'Создать аккаунт' }}
         </button>
 
-        <div class="text-center mt-2">
-          <span class="text-[14px] text-[#111111]">Уже есть аккаунт? </span>
-          <RouterLink to="/login" class="text-[14px] text-[#31007E] hover:underline">Войти</RouterLink>
+        <!-- Уже есть аккаунт? -->
+        <div class="flex justify-center gap-1 mt-[25px]">
+          <span class="text-[16px] font-normal text-[#000000] leading-[19px]">Уже есть аккаунт?</span>
+          <RouterLink to="/login" class="text-[16px] font-normal text-[#42008A] leading-[19px] hover:underline">Войти</RouterLink>
         </div>
       </form>
+
     </div>
   </AuthLayout>
 </template>

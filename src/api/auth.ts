@@ -20,26 +20,39 @@ export interface RegisterRequest {
     password: string
 }
 
+// Берем адрес бекенда из файла .env
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
 export const authApi = {
     async login(data: LoginRequest): Promise<AuthResponse> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    token: 'mock-jwt-token-123',
-                    user: { id: '1', email: data.email }
-                })
-            }, 1000)
-        })
+        const response = await fetch(`${API_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка авторизации');
+        }
+
+        return response.json();
     },
 
     async register(data: RegisterRequest): Promise<AuthResponse> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    token: 'mock-jwt-token-456',
-                    user: { id: '2', email: data.email, companyName: data.companyName }
-                })
-            }, 1000)
-        })
+        const response = await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка регистрации');
+        }
+
+        return response.json();
     }
 }
