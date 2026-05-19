@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  vue-app:
+    build: .
+    ports:
+      - "5173:80" # left is host port, right is container port
+    restart: always
