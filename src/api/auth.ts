@@ -52,7 +52,7 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
 }
 
 export async function verifyEmail(data: VerifyEmailRequest): Promise<AuthResponse> {
-    const response = await http.post<AuthResponse>('/api/auth/verify-email', data)
+    const response = await http.post<AuthResponse>('/api/auth/verify', data)
     const payload = response.data
 
     if (payload.token) {

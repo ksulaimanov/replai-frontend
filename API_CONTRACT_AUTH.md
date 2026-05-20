@@ -80,7 +80,7 @@
 
 ---
 
-### C) POST /api/auth/verify-email
+### C) POST /api/auth/verify
 - Описание: подтверждение email по коду; если код валидный — пометить `enabled=true` и выдать JWT.
 - Request:
 
@@ -164,7 +164,7 @@ curl -X POST https://api.example.com/api/auth/login \
 
 Подтверждение кода:
 ```bash
-curl -X POST https://api.example.com/api/auth/verify-email \
+curl -X POST https://api.example.com/api/auth/verify \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","code":"123456"}'
 ```
@@ -181,7 +181,7 @@ curl -X POST https://api.example.com/api/auth/resend-code \
 ## 6. Что во фронтенде зависит от контракта
 - `src/api/auth.ts` — ожидает `token`, `email`, `companyName` в ответах.
 - `src/views/auth/RegisterView.vue` — после успешного `register` переходит на `/verify-email` и кладет email в `sessionStorage.verificationEmail`.
-- `src/views/auth/VerifyEmailView.vue` — вызывает `/verify-email` и `/resend-code`; на успешный ответ сохраняет `token` в `localStorage` и редиректит на `/dashboard`.
+- `src/views/auth/VerifyEmailView.vue` — вызывает `/verify` и `/resend-code`; на успешный ответ сохраняет `token` в `localStorage` и редиректит на `/dashboard`.
 - `src/views/auth/LoginView.vue` — если при логине приходит `token`, делает `localStorage.setItem('token', token)` и переходит на `/dashboard`; если приходит `EMAIL_NOT_VERIFIED`, редиректит на `/verify-email`.
 - `src/router/index.ts` — guard проверяет наличие `localStorage.token` или токена в auth store для доступа к `/dashboard`.
 
