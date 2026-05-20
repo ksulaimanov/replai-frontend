@@ -7,6 +7,10 @@ const mobileMenuOpen = ref(false)
 
 const navItems = [
   { to: '/dashboard', label: 'Дашборд', icon: '/dashboard.png', exact: true },
+  {
+    to: '/leads', label: 'Лиды', icon: null,
+    svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  },
   { to: '/automation', label: 'Автоматизация', icon: '/automation.png' },
   { to: '/integrations', label: 'Интеграции', icon: '/integration.png' },
   { to: '/test-ai', label: 'Тест AI', icon: '/testai.png' }
@@ -37,7 +41,8 @@ const closeMobileMenu = () => {
           <nav class="mt-6 flex flex-col gap-3">
             <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="block outline-none">
               <button class="menu-btn" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
-                <img :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
+                <span v-if="item.svg" :class="getIconClass(item.to, item.exact)" v-html="item.svg"></span>
+                <img v-else :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
                 <span class="font-semibold">{{ item.label }}</span>
               </button>
             </RouterLink>

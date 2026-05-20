@@ -49,6 +49,12 @@ const router = createRouter({
             name: 'test-ai',
             component: () => import('../views/dashboard/TestAIView.vue'),
             meta: { requiresAuth: true }
+        },
+        {
+            path: '/leads',
+            name: 'leads',
+            component: () => import('../views/dashboard/LeadsView.vue'),
+            meta: { requiresAuth: true }
         }
     ]
 })

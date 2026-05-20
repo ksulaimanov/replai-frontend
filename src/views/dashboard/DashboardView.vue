@@ -1,21 +1,45 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import { getAnalytics, type Analytics } from '@/api/bot'
 
-const userName = ref('Имя')
+const analytics = ref<Analytics>({ totalMessages: 0, uniqueChats: 0, leads: 0 })
+const loading = ref(true)
 
-const stats = {
-  activeDialogs: 167,
-  leads: 324,
-  channels: 2
-}
+onMounted(async () => {
+  try {
+    analytics.value = await getAnalytics()
+  } catch {
+    // keep zeros on error
+  } finally {
+    loading.value = false
+  }
+})
 
-const recentChats = ref([
-  { channel: 'Telegram', client: '@alex_business', message: 'Здравствуйте, можно узнать стоимость тарифов?', time: '2 мин назад' },
-  { channel: 'WhatsApp', client: '+996 700 123 456', message: 'AI помог подобрать подходящий тариф, спасибо!', time: '15 мин назад' },
-  { channel: 'Telegram', client: '@digital_store', message: 'Можно подключить Telegram и WhatsApp одновременно?', time: '1 ч назад' },
-  { channel: 'WhatsApp', client: '+996 555 987 321', message: '/start', time: '3 ч назад' }
+const maxVal = computed(() =>
+  Math.max(analytics.value.totalMessages, analytics.value.uniqueChats, analytics.value.leads, 1)
+)
+
+const bars = computed(() => [
+  {
+    label: 'Сообщений',
+    value: analytics.value.totalMessages,
+    pct: Math.round((analytics.value.totalMessages / maxVal.value) * 100),
+    color: 'from-[#7C3AED] to-[#42008A]',
+  },
+  {
+    label: 'Диалогов',
+    value: analytics.value.uniqueChats,
+    pct: Math.round((analytics.value.uniqueChats / maxVal.value) * 100),
+    color: 'from-[#9A7CC2] to-[#6D28D9]',
+  },
+  {
+    label: 'Лидов',
+    value: analytics.value.leads,
+    pct: Math.round((analytics.value.leads / maxVal.value) * 100),
+    color: 'from-[#A78BFA] to-[#7C3AED]',
+  },
 ])
 </script>
 
@@ -24,7 +48,7 @@ const recentChats = ref([
     <div>
       <div class="header-row flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <div class="text-[18px] font-semibold text-[#424754] leading-[1.2]">С возвращением, {{ userName }}</div>
+          <div class="text-[18px] font-semibold text-[#424754] leading-[1.2]">Добро пожаловать</div>
           <h1 class="text-[32px] font-semibold text-[#42008A] mt-4 leading-[1.1]">Дашборд</h1>
         </div>
 
@@ -32,52 +56,86 @@ const recentChats = ref([
           <RouterLink to="/test-ai" class="action-btn-link"><button class="action-btn">+ Протестировать AI</button></RouterLink>
           <RouterLink to="/integrations" class="action-btn-link"><button class="action-btn">+ Подключить канал</button></RouterLink>
           <RouterLink to="/automation" class="action-btn-link"><button class="action-btn">+ Новый сценарий</button></RouterLink>
-          <div class="w-10 h-10 rounded-full bg-[#f0f0f4] flex items-center justify-center ml-2 shrink-0">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3" stroke="#424754" stroke-width="1.5"/><path d="M4 20c1.5-4 14-4 16 0" stroke="#424754" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
         </div>
       </div>
 
+      <!-- Stat cards -->
       <div class="mt-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div class="stat-card">
-          <div class="stat-title">Активные диалоги</div>
-          <div class="stat-value">{{ stats.activeDialogs }}</div>
-          <div class="stat-note">+12% за неделю</div>
+          <div class="stat-title">Всего сообщений</div>
+          <div class="stat-value">
+            <span v-if="loading" class="opacity-40">—</span>
+            <span v-else>{{ analytics.totalMessages.toLocaleString('ru-RU') }}</span>
+          </div>
+          <div class="stat-note">Входящие + исходящие</div>
         </div>
         <div class="stat-card">
-          <div class="stat-title">Квалифицированные лиды</div>
-          <div class="stat-value">{{ stats.leads }}</div>
-          <div class="stat-note">AI определил высокий интерес</div>
+          <div class="stat-title">Уникальных диалогов</div>
+          <div class="stat-value">
+            <span v-if="loading" class="opacity-40">—</span>
+            <span v-else>{{ analytics.uniqueChats.toLocaleString('ru-RU') }}</span>
+          </div>
+          <div class="stat-note">Активные чаты бота</div>
         </div>
         <div class="stat-card">
-          <div class="stat-title">Активные каналы</div>
-          <div class="stat-value">{{ stats.channels }}</div>
-          <div class="stat-note">Telegram, WhatsApp</div>
+          <div class="stat-title">Собрано лидов</div>
+          <div class="stat-value">
+            <span v-if="loading" class="opacity-40">—</span>
+            <span v-else>{{ analytics.leads.toLocaleString('ru-RU') }}</span>
+          </div>
+          <div class="stat-note">
+            <RouterLink to="/leads" class="underline underline-offset-2 hover:opacity-80">Смотреть все →</RouterLink>
+          </div>
         </div>
       </div>
 
-      <div class="mt-12">
-        <h2 class="text-[20px] font-medium mb-4">Недавние чаты</h2>
-        <div class="recent-table bg-[#F3F1FD] rounded-[15px] overflow-hidden w-full overflow-x-auto relative">
-          <div class="absolute w-[200px] h-[300px] rounded-full left-[250px] top-1/2 -translate-y-1/2 bg-[linear-gradient(180deg,rgba(215,211,246,0.5)_0%,rgba(66,0,138,0.05)_100%)] blur-[40px] pointer-events-none hidden"></div>
-          <div class="min-w-[800px]">
-            <div class="table-head bg-[rgba(189,165,213,0.7)] px-6 py-4 text-[18px] font-medium text-black grid grid-cols-[140px_200px_1fr_120px] gap-4">
-              <div>Каналы</div>
-              <div>Клиенты</div>
-              <div>Последние сообщения</div>
-              <div class="text-right">Время</div>
+      <!-- Activity chart (Tailwind CSS bars) -->
+      <div class="mt-10 bg-[#F4EFFF] rounded-[15px] p-6">
+        <h2 class="text-[18px] font-semibold text-[#42008A] mb-6">Активность бота</h2>
+
+        <div v-if="loading" class="flex items-center justify-center h-[140px] text-[#9A7CC2] text-[14px]">
+          Загрузка данных...
+        </div>
+
+        <div v-else class="flex flex-col gap-5">
+          <div v-for="bar in bars" :key="bar.label" class="flex items-center gap-4">
+            <div class="w-[100px] shrink-0 text-[13px] font-medium text-[#424754] text-right">{{ bar.label }}</div>
+            <div class="flex-1 bg-[rgba(66,0,138,0.08)] rounded-full h-[14px] overflow-hidden">
+              <div
+                class="h-full rounded-full bg-gradient-to-r transition-all duration-700"
+                :class="bar.color"
+                :style="{ width: bar.pct + '%' }"
+              ></div>
             </div>
-            <div class="px-6 py-2 bg-[rgba(238,233,250,0.5)]">
-              <div v-for="(chat, idx) in recentChats" :key="idx" class="chat-row grid grid-cols-[140px_200px_1fr_120px] gap-4 items-center py-6 border-b border-[rgba(202,185,224,0.4)] last:border-b-0 relative z-10">
-                <div><span class="channel-pill inline-block py-1 px-4 rounded-[16px] text-white text-[14px] bg-[#7E57C2]">{{ chat.channel }}</span></div>
-                <div class="text-[14px] text-[#555] break-words">{{ chat.client }}</div>
-                <div class="text-[14px] break-words min-w-0 text-[#222]">{{ chat.message }}</div>
-                <div class="text-[14px] text-right whitespace-nowrap text-[#555]">{{ chat.time }}</div>
-              </div>
-            </div>
-            <div class="px-6 py-6 text-center text-[#42008A] font-semibold text-[14px] cursor-pointer hover:underline bg-[rgba(238,233,250,0.5)] relative z-10">Посмотреть все диалоги →</div>
+            <div class="w-[52px] shrink-0 text-[13px] font-semibold text-[#42008A]">{{ bar.value.toLocaleString('ru-RU') }}</div>
           </div>
         </div>
+
+        <p class="mt-5 text-[12px] text-[#9CA3AF]">Данные обновляются в реальном времени из базы данных</p>
+      </div>
+
+      <!-- Quick links -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <RouterLink to="/leads">
+          <div class="quick-card group">
+            <div class="quick-icon">📋</div>
+            <div>
+              <div class="quick-title">База лидов</div>
+              <div class="quick-sub">Контакты, собранные ботом</div>
+            </div>
+            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </RouterLink>
+        <RouterLink to="/test-ai">
+          <div class="quick-card group">
+            <div class="quick-icon">🤖</div>
+            <div>
+              <div class="quick-title">Тест AI</div>
+              <div class="quick-sub">Диалог с вашим ботом</div>
+            </div>
+            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </RouterLink>
       </div>
     </div>
   </DashboardLayout>
@@ -86,11 +144,25 @@ const recentChats = ref([
 <style scoped>
 .action-btn-link { display: inline-flex; }
 .action-btn { background: #42008A; color: #FFFFFF; border-radius: 10px; padding: 10px 16px; font-weight: 600; white-space: nowrap; }
-.stat-card { min-height: 189px; border-radius: 15px; padding: 28px 32px; background: linear-gradient(119.01deg, #D7D3F6 32.05%, rgba(66, 0, 138, 0.69) 92.25%); }
+
+.stat-card {
+  min-height: 189px; border-radius: 15px; padding: 28px 32px;
+  background: linear-gradient(119.01deg, #D7D3F6 32.05%, rgba(66, 0, 138, 0.69) 92.25%);
+}
 .stat-title { font-size: 18px; font-weight: 500; color: #000; }
 .stat-value { margin-top: 28px; font-size: 28px; font-weight: 600; color: #000; }
 .stat-note { margin-top: 36px; font-size: 16px; font-weight: 600; color: #42008A; }
-.channel-pill { display: inline-flex; align-items: center; padding: 8px 18px; border-radius: 9999px; color: #fff; font-size: 16px; line-height: 1; }
+
+.quick-card {
+  display: flex; align-items: center; gap: 14px;
+  background: #F4EFFF; border-radius: 14px; padding: 18px 20px;
+  cursor: pointer; transition: box-shadow 0.2s;
+}
+.quick-card:hover { box-shadow: 0 4px 20px rgba(66,0,138,0.12); }
+.quick-icon { font-size: 24px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 10px; flex-shrink: 0; }
+.quick-title { font-size: 15px; font-weight: 600; color: #42008A; }
+.quick-sub { font-size: 13px; color: #6B7280; margin-top: 2px; }
+
 @media (max-width: 768px) {
   .header-actions { justify-content: flex-start; }
   .action-btn-link { width: 100%; }
