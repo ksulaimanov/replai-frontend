@@ -22,6 +22,20 @@ export interface TelegramIntegrationResponse {
     message?: string
 }
 
+export interface Lead {
+    id: number
+    name: string | null
+    phone: string | null
+    externalChatId: string
+    createdAt: string
+}
+
+export interface Analytics {
+    totalMessages: number
+    uniqueChats: number
+    leads: number
+}
+
 export async function getBotConfig(): Promise<BotConfig> {
     const response = await http.get<BotConfig>('/api/bot/config')
     return response.data
@@ -57,11 +71,23 @@ export async function connectTelegramIntegration(payload: TelegramIntegrationPay
     return response.data
 }
 
+export async function getLeads(): Promise<Lead[]> {
+    const response = await http.get<Lead[]>('/api/bot/leads')
+    return response.data
+}
+
+export async function getAnalytics(): Promise<Analytics> {
+    const response = await http.get<Analytics>('/api/bot/analytics')
+    return response.data
+}
+
 export const botApi = {
     getBotConfig,
     updateBotConfig,
     getFiles,
     uploadFile,
     deleteFile,
-    connectTelegramIntegration
+    connectTelegramIntegration,
+    getLeads,
+    getAnalytics,
 }
