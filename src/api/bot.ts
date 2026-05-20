@@ -13,6 +13,15 @@ export interface FileData {
     uploadDate: string
 }
 
+export interface TelegramIntegrationPayload {
+    token: string
+}
+
+export interface TelegramIntegrationResponse {
+    success: boolean
+    message?: string
+}
+
 export async function getBotConfig(): Promise<BotConfig> {
     const response = await http.get<BotConfig>('/api/bot/config')
     return response.data
@@ -43,10 +52,16 @@ export async function deleteFile(fileId: string): Promise<void> {
     await http.delete(`/api/bot/files/${fileId}`)
 }
 
+export async function connectTelegramIntegration(payload: TelegramIntegrationPayload): Promise<TelegramIntegrationResponse> {
+    const response = await http.post<TelegramIntegrationResponse>('/api/integrations/telegram', payload)
+    return response.data
+}
+
 export const botApi = {
     getBotConfig,
     updateBotConfig,
     getFiles,
     uploadFile,
-    deleteFile
+    deleteFile,
+    connectTelegramIntegration
 }

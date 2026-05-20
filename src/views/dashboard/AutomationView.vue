@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import { botApi, type BotConfig, type FileData } from '@/api/bot'
 
 const botConfig = ref<BotConfig>({
   name: '',
-  prompt: 'Вы — Алекс, полезный искусственный интеллект службы поддержки клиентов. Ваш тон должен быть дружелюбным, лаконичным и профессиональным. Всегда ставьте в приоритет быстрое решение проблемы пользователя.'
+  prompt: ''
 })
 
+const validationError = ref('')
 const files = ref<FileData[]>([])
 const isSaving = ref(false)
 const isUploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+
+const promptPlaceholder = 'Вы — Алекс, полезный искусственный интеллект службы поддержки клиентов. Ваш тон должен быть дружелюбным, лаконичным и профессиональным. Всегда ставьте в приоритет быстрое решение проблемы пользователя.'
 
 const loadData = async () => {
   try {
@@ -28,11 +31,26 @@ const loadData = async () => {
   }
 }
 
+const canSave = computed(() => botConfig.value.name.trim().length > 0 && botConfig.value.prompt.trim().length > 0)
+
 const saveChanges = async () => {
+  validationError.value = ''
+
+  if (!botConfig.value.name.trim()) {
+    validationError.value = 'Пожалуйста, заполните поле "Имя Бота"'
+    return
+  }
+
+  if (!botConfig.value.prompt.trim()) {
+    validationError.value = 'Пожалуйста, заполните поле "Системный Промпт"'
+    return
+  }
+
   if (isSaving.value) return
   isSaving.value = true
   try {
     await botApi.updateBotConfig(botConfig.value)
+    validationError.value = ''
     alert('Изменения сохранены')
   } catch (error) {
     console.error('Failed to save changes', error)
@@ -115,6 +133,10 @@ onMounted(() => {
         <div class="hidden lg:block absolute w-[1077.01px] h-[0px] left-[17px] top-[74.98px] border-t border-[rgba(66,0,138,0.69)]"></div>
         <div class="lg:hidden border-t border-[rgba(66,0,138,0.69)] my-4"></div>
 
+        <div v-if="validationError" class="mb-4 p-3 bg-red-100 border border-red-300 rounded-[8px] text-red-700 text-[14px]">
+          {{ validationError }}
+        </div>
+
         <div class="lg:absolute lg:left-[31px] lg:top-[100px] w-full lg:w-[1063px]">
           <label class="block text-[16px] font-medium text-black leading-[16px] tracking-[0.24px] mb-2">Имя Бота</label>
           <input
@@ -129,15 +151,17 @@ onMounted(() => {
           <label class="block text-[16px] font-medium text-black leading-[16px] tracking-[0.24px] mb-2">Системный Промпт</label>
           <textarea
             v-model="botConfig.prompt"
-            class="w-full h-[124px] bg-transparent border border-[rgba(66,0,138,0.69)] rounded-[10px] p-4 font-medium text-[16px] leading-[20px] tracking-[0.24px] text-[rgba(66,71,84,0.6)] focus:outline-none focus:border-[#42008A] resize-none"
+            :placeholder="promptPlaceholder"
+            class="w-full h-[124px] bg-transparent border border-[rgba(66,0,138,0.69)] rounded-[10px] p-4 font-medium text-[16px] leading-[20px] tracking-[0.24px] text-[rgba(66,71,84,0.6)] placeholder-gray-400 focus:outline-none focus:border-[#42008A] resize-none"
           ></textarea>
           <p class="mt-2 text-[14px] font-medium text-black leading-[16px] tracking-[0.24px]">Определяет основные характеристики и инструкции для вашего бота.</p>
         </div>
 
         <button
           @click="saveChanges"
-          :disabled="isSaving"
-          class="mt-6 lg:mt-0 lg:absolute lg:right-[31px] lg:bottom-[23px] w-[202px] h-[40px] bg-[#42008A] text-white rounded-[10px] font-medium text-[14px] leading-[16px] tracking-[0.24px] flex items-center justify-center hover:bg-opacity-90 disabled:opacity-70 transition-colors"
+          :disabled="!canSave || isSaving"
+          class="mt-6 lg:mt-0 lg:absolute lg:right-[31px] lg:bottom-[23px] w-[202px] h-[40px] rounded-[10px] font-medium text-[14px] leading-[16px] tracking-[0.24px] flex items-center justify-center transition-colors"
+          :class="canSave && !isSaving ? 'bg-[#42008A] text-white hover:bg-opacity-90' : 'bg-[#E5E7EB] text-[#8B95A7] cursor-not-allowed'"
         >
           {{ isSaving ? 'Сохранение...' : 'Сохранить Изменения' }}
         </button>

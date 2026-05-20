@@ -15,6 +15,7 @@ const navItems = [
 const activePath = computed(() => route.path)
 
 const isActive = (path: string, exact = false) => (exact ? activePath.value === path : activePath.value.startsWith(path))
+const getIconClass = (path: string, exact = false) => (isActive(path, exact) ? 'menu-icon menu-icon--active' : 'menu-icon')
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
@@ -36,7 +37,7 @@ const closeMobileMenu = () => {
           <nav class="mt-6 flex flex-col gap-3">
             <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="block outline-none">
               <button class="menu-btn" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
-                <img :src="item.icon" :alt="item.label" class="menu-icon" :class="item.to === '/integrations' || item.to === '/test-ai' ? 'menu-icon--wide' : ''" />
+                <img :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
                 <span class="font-semibold">{{ item.label }}</span>
               </button>
             </RouterLink>
@@ -68,7 +69,7 @@ const closeMobileMenu = () => {
         <nav class="flex flex-col gap-3">
           <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="block outline-none" @click="closeMobileMenu">
             <button class="menu-btn" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
-              <img :src="item.icon" :alt="item.label" class="menu-icon" :class="item.to === '/integrations' || item.to === '/test-ai' ? 'menu-icon--wide' : ''" />
+              <img :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
               <span class="font-semibold">{{ item.label }}</span>
             </button>
           </RouterLink>
@@ -92,8 +93,8 @@ const closeMobileMenu = () => {
 .menu-btn--active { background: linear-gradient(180deg, rgba(66, 0, 138, 0.8) 0%, rgba(17, 0, 36, 0.8) 100%); color: #FFFFFF; }
 .menu-btn--ghost { color: #42008A; background: transparent; }
 .menu-btn--ghost:hover { background: rgba(66, 0, 138, 0.05); }
-.menu-icon { width: 32px; height: 32px; object-fit: contain; flex: 0 0 auto; }
-.menu-icon--wide { width: 32px; height: 32px; }
+.menu-icon { width: 32px; height: 32px; object-fit: contain; flex: 0 0 auto; transition: filter 0.2s ease-in-out; }
+.menu-icon--active { filter: brightness(0) invert(1); }
 .burger-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(66,0,138,0.18); display: inline-flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; background: white; }
 .burger-btn span { width: 18px; height: 2px; background: #42008A; border-radius: 9999px; }
 .mobile-drawer { box-shadow: 12px 0 40px rgba(0,0,0,0.16); }
