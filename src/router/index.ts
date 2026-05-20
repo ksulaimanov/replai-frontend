@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +7,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: HomeView
+            component: () => import('../views/HomeView.vue')
         },
         {
             path: '/login',
@@ -29,32 +29,35 @@ const router = createRouter({
             name: 'dashboard',
             component: () => import('../views/dashboard/DashboardView.vue'),
             meta: {
-                requiresAuth: false
+                requiresAuth: true
             }
         },
         {
             path: '/automation',
             name: 'automation',
             component: () => import('../views/dashboard/AutomationView.vue'),
-            meta: { requiresAuth: false }
+            meta: { requiresAuth: true }
         },
         {
             path: '/integrations',
             name: 'integrations',
             component: () => import('../views/dashboard/IntegrationsView.vue'),
-            meta: { requiresAuth: false }
+            meta: { requiresAuth: true }
         },
         {
             path: '/test-ai',
             name: 'test-ai',
             component: () => import('../views/dashboard/TestAIView.vue'),
-            meta: { requiresAuth: false }
+            meta: { requiresAuth: true }
         }
     ]
 })
 
 router.beforeEach((to) => {
-    if (to.meta.requiresAuth && !localStorage.getItem('token')) {
+    const authStore = useAuthStore()
+    authStore.hydrate()
+
+    if (to.meta.requiresAuth && !authStore.token) {
         return '/login'
     }
 

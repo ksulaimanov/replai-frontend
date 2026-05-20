@@ -1,4 +1,6 @@
 import { http } from './http'
+import { getActivePinia } from 'pinia'
+import { useAuthStore } from '../stores/auth'
 
 export interface User {
     id: string
@@ -32,10 +34,6 @@ export interface ResendVerificationRequest {
     email: string
 }
 
-export interface VerifyResponse {
-    success: boolean
-    email: string
-}
 
 export interface ResendCodeResponse {
     success: boolean
@@ -53,9 +51,18 @@ export async function register(data: RegisterRequest): Promise<AuthResponse> {
     return response.data
 }
 
-export async function verifyEmail(data: VerifyEmailRequest): Promise<VerifyResponse> {
-    const response = await http.post<VerifyResponse>('/api/auth/verify-email', data)
-    return response.data
+export async function verifyEmail(data: VerifyEmailRequest): Promise<AuthResponse> {
+    const response = await http.post<AuthResponse>('/api/auth/verify-email', data)
+    const payload = response.data
+
+    if (payload.token) {
+        localStorage.setItem('token', payload.token)
+        if (getActivePinia()) {
+            useAuthStore().setToken(payload.token)
+        }
+    }
+
+    return payload
 }
 
 export async function resendCode(data: ResendVerificationRequest): Promise<ResendCodeResponse> {
