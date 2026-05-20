@@ -12,6 +12,23 @@ const fileInput = ref<HTMLInputElement | null>(null)
 
 const promptPlaceholder = 'Вы — Алекс, полезный искусственный интеллект службы поддержки клиентов. Ваш тон должен быть дружелюбным, лаконичным и профессиональным. Всегда ставьте в приоритет быстрое решение проблемы пользователя.'
 
+const formatDate = (iso: string): string => {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })
+  } catch {
+    return iso
+  }
+}
+
+const pluralFiles = (n: number): string => {
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 === 1 && mod100 !== 11) return `${n} файл`
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return `${n} файла`
+  return `${n} файлов`
+}
+
 const loadData = async () => {
   await botStore.loadBotConfig()
   await botStore.loadFiles()
@@ -157,7 +174,7 @@ onMounted(() => {
         <div class="flex justify-between items-center mb-4 lg:absolute lg:left-[31px] lg:top-[32px] lg:w-[1056px]">
           <h2 class="text-[20px] font-medium text-black leading-[16px] tracking-[0.24px]">База данных</h2>
           <div class="bg-[rgba(66,0,138,0.69)] text-white text-[12px] font-medium leading-[16px] tracking-[0.24px] px-3 py-1 rounded-[13px] flex items-center justify-center min-w-[100px] h-[26px]">
-            {{ botStore.files.length }} файла
+            {{ pluralFiles(botStore.files.length) }}
           </div>
         </div>
 
@@ -208,7 +225,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium text-[14px] leading-[20px] text-[#191B23]">{{ file.name }}</span>
-                <span class="font-semibold text-[12px] leading-[16px] tracking-[0.24px] text-[#424754]">{{ (file.size / 1024 / 1024).toFixed(1) }} MB • {{ file.uploadDate }}</span>
+                <span class="font-semibold text-[12px] leading-[16px] tracking-[0.24px] text-[#424754]">{{ (file.size / 1024 / 1024).toFixed(1) }} MB • {{ formatDate(file.uploadDate) }}</span>
               </div>
             </div>
             <button
