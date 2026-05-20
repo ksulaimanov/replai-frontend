@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import { getAnalytics, type Analytics } from '@/api/bot'
+import { useToast } from '@/composables/useToast'
+
+const { error } = useToast()
 
 const analytics = ref<Analytics>({ totalMessages: 0, uniqueChats: 0, leads: 0 })
 const loading = ref(true)
@@ -11,7 +14,7 @@ onMounted(async () => {
   try {
     analytics.value = await getAnalytics()
   } catch {
-    // keep zeros on error
+    error('Не удалось загрузить аналитику. Проверьте подключение к сети.')
   } finally {
     loading.value = false
   }
@@ -61,26 +64,37 @@ const bars = computed(() => [
 
       <!-- Stat cards -->
       <div class="mt-8 grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <!-- Card 1 -->
         <div class="stat-card">
           <div class="stat-title">Всего сообщений</div>
           <div class="stat-value">
-            <span v-if="loading" class="opacity-40">—</span>
+            <div v-if="loading" class="animate-pulse mt-7">
+              <div class="h-7 w-16 bg-[rgba(0,0,0,0.15)] rounded"></div>
+            </div>
             <span v-else>{{ analytics.totalMessages.toLocaleString('ru-RU') }}</span>
           </div>
           <div class="stat-note">Входящие + исходящие</div>
         </div>
+
+        <!-- Card 2 -->
         <div class="stat-card">
           <div class="stat-title">Уникальных диалогов</div>
           <div class="stat-value">
-            <span v-if="loading" class="opacity-40">—</span>
+            <div v-if="loading" class="animate-pulse mt-7">
+              <div class="h-7 w-12 bg-[rgba(0,0,0,0.15)] rounded"></div>
+            </div>
             <span v-else>{{ analytics.uniqueChats.toLocaleString('ru-RU') }}</span>
           </div>
           <div class="stat-note">Активные чаты бота</div>
         </div>
+
+        <!-- Card 3 -->
         <div class="stat-card">
           <div class="stat-title">Собрано лидов</div>
           <div class="stat-value">
-            <span v-if="loading" class="opacity-40">—</span>
+            <div v-if="loading" class="animate-pulse mt-7">
+              <div class="h-7 w-10 bg-[rgba(0,0,0,0.15)] rounded"></div>
+            </div>
             <span v-else>{{ analytics.leads.toLocaleString('ru-RU') }}</span>
           </div>
           <div class="stat-note">
@@ -93,10 +107,18 @@ const bars = computed(() => [
       <div class="mt-10 bg-[#F4EFFF] rounded-[15px] p-6">
         <h2 class="text-[18px] font-semibold text-[#42008A] mb-6">Активность бота</h2>
 
-        <div v-if="loading" class="flex items-center justify-center h-[140px] text-[#9A7CC2] text-[14px]">
-          Загрузка данных...
+        <!-- Skeleton bars -->
+        <div v-if="loading" class="flex flex-col gap-5">
+          <div v-for="i in 3" :key="i" class="flex items-center gap-4">
+            <div class="w-[100px] shrink-0 h-3 rounded animate-pulse bg-[rgba(66,0,138,0.1)]"></div>
+            <div class="flex-1 bg-[rgba(66,0,138,0.08)] rounded-full h-[14px] overflow-hidden">
+              <div class="h-full rounded-full bg-[rgba(66,0,138,0.12)] animate-pulse" :style="{ width: (40 + i * 15) + '%' }"></div>
+            </div>
+            <div class="w-[52px] h-3 rounded animate-pulse bg-[rgba(66,0,138,0.1)]"></div>
+          </div>
         </div>
 
+        <!-- Real bars -->
         <div v-else class="flex flex-col gap-5">
           <div v-for="bar in bars" :key="bar.label" class="flex items-center gap-4">
             <div class="w-[100px] shrink-0 text-[13px] font-medium text-[#424754] text-right">{{ bar.label }}</div>

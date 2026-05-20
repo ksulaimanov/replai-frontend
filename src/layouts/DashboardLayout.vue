@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import ToastContainer from '@/components/ToastContainer.vue'
 
 const route = useRoute()
 const mobileMenuOpen = ref(false)
@@ -85,6 +86,8 @@ const closeMobileMenu = () => {
     <main class="main-content relative z-10 ml-0 lg:ml-[264px] p-4 lg:p-8 xl:pr-16 w-full lg:w-auto overflow-hidden">
       <slot />
     </main>
+
+    <ToastContainer />
   </div>
 </template>
 
