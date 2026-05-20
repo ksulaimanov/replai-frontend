@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import { botApi, type BotConfig, type FileData } from '@/api/bot'
+import { botApi, type FileData } from '@/api/bot'
+import { useBotStore } from '@/stores/bot'
 
-const botConfig = ref<BotConfig>({
-  name: '',
-  prompt: ''
-})
-
+const botStore = useBotStore()
 const validationError = ref('')
-const files = ref<FileData[]>([])
 const isSaving = ref(false)
 const isUploading = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -17,31 +13,21 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const promptPlaceholder = 'Вы — Алекс, полезный искусственный интеллект службы поддержки клиентов. Ваш тон должен быть дружелюбным, лаконичным и профессиональным. Всегда ставьте в приоритет быстрое решение проблемы пользователя.'
 
 const loadData = async () => {
-  try {
-    const config = await botApi.getBotConfig()
-    if (config) botConfig.value = config
-  } catch (error) {
-    console.error('Failed to load bot config', error)
-  }
-
-  try {
-    files.value = await botApi.getFiles()
-  } catch (error) {
-    console.error('Failed to load files', error)
-  }
+  await botStore.loadBotConfig()
+  await botStore.loadFiles()
 }
 
-const canSave = computed(() => botConfig.value.name.trim().length > 0 && botConfig.value.prompt.trim().length > 0)
+const canSave = computed(() => botStore.botConfig.name.trim().length > 0 && botStore.botConfig.prompt.trim().length > 0)
 
 const saveChanges = async () => {
   validationError.value = ''
 
-  if (!botConfig.value.name.trim()) {
+  if (!botStore.botConfig.name.trim()) {
     validationError.value = 'Пожалуйста, заполните поле "Имя Бота"'
     return
   }
 
-  if (!botConfig.value.prompt.trim()) {
+  if (!botStore.botConfig.prompt.trim()) {
     validationError.value = 'Пожалуйста, заполните поле "Системный Промпт"'
     return
   }
@@ -49,7 +35,7 @@ const saveChanges = async () => {
   if (isSaving.value) return
   isSaving.value = true
   try {
-    await botApi.updateBotConfig(botConfig.value)
+    await botStore.updateBotConfig(botStore.botConfig)
     validationError.value = ''
     alert('Изменения сохранены')
   } catch (error) {
@@ -95,7 +81,7 @@ const uploadNewFile = async (file: File) => {
   isUploading.value = true
   try {
       const newFile = await botApi.uploadFile(file)
-      files.value.push(newFile)
+      botStore.files.push(newFile)
   } catch (error) {
       console.error('Failed to upload file', error)
       alert('Не удалось загрузить файл')
@@ -107,7 +93,7 @@ const uploadNewFile = async (file: File) => {
 const deleteFile = async (fileId: string) => {
   try {
       await botApi.deleteFile(fileId)
-      files.value = files.value.filter(f => f.id !== fileId)
+      botStore.files = botStore.files.filter(f => f.id !== fileId)
   } catch (error) {
       console.error('Failed to delete file', error)
       alert('Не удалось удалить файл')
@@ -140,7 +126,7 @@ onMounted(() => {
         <div class="lg:absolute lg:left-[31px] lg:top-[100px] w-full lg:w-[1063px]">
           <label class="block text-[16px] font-medium text-black leading-[16px] tracking-[0.24px] mb-2">Имя Бота</label>
           <input
-            v-model="botConfig.name"
+            v-model="botStore.botConfig.name"
             type="text"
             placeholder="Алекс"
             class="w-full h-[53px] bg-transparent border border-[rgba(66,0,138,0.69)] rounded-[10px] px-4 font-medium text-[16px] text-black focus:outline-none focus:border-[#42008A]"
@@ -150,7 +136,7 @@ onMounted(() => {
         <div class="mt-6 lg:mt-0 lg:absolute lg:left-[31px] lg:top-[202px] w-full lg:w-[1063px]">
           <label class="block text-[16px] font-medium text-black leading-[16px] tracking-[0.24px] mb-2">Системный Промпт</label>
           <textarea
-            v-model="botConfig.prompt"
+            v-model="botStore.botConfig.prompt"
             :placeholder="promptPlaceholder"
             class="w-full h-[124px] bg-transparent border border-[rgba(66,0,138,0.69)] rounded-[10px] p-4 font-medium text-[16px] leading-[20px] tracking-[0.24px] text-[rgba(66,71,84,0.6)] placeholder-gray-400 focus:outline-none focus:border-[#42008A] resize-none"
           ></textarea>
@@ -171,7 +157,7 @@ onMounted(() => {
         <div class="flex justify-between items-center mb-4 lg:absolute lg:left-[31px] lg:top-[32px] lg:w-[1056px]">
           <h2 class="text-[20px] font-medium text-black leading-[16px] tracking-[0.24px]">База данных</h2>
           <div class="bg-[rgba(66,0,138,0.69)] text-white text-[12px] font-medium leading-[16px] tracking-[0.24px] px-3 py-1 rounded-[13px] flex items-center justify-center min-w-[100px] h-[26px]">
-            {{ files.length }} файла
+            {{ botStore.files.length }} файла
           </div>
         </div>
 
@@ -212,7 +198,7 @@ onMounted(() => {
 
         <div class="mt-8 lg:mt-0 flex flex-col gap-4 lg:absolute lg:left-[31px] lg:top-[347px] w-full lg:w-[1056px]">
           <div
-            v-for="file in files"
+            v-for="file in botStore.files"
             :key="file.id"
             class="border border-[rgba(66,0,138,0.69)] rounded-[10px] p-4 flex items-center justify-between h-[73px] bg-transparent"
           >
