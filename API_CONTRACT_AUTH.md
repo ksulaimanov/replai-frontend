@@ -16,8 +16,7 @@
 ```json
 {
   "error": "ERROR_CODE",
-  "message": "Читабельное сообщение",
-  "details": { }
+  "message": "Читабельное сообщение"
 }
 ```
 
@@ -42,25 +41,17 @@
 }
 ```
 
-- Response (рекомендуемый): 201 Created
+- Response: 201 Created
 
 ```json
 {
-  "user": {
-    "id": "uuid-or-long",
-    "email": "user@example.com",
-    "companyName": "Acme Ink."
-  },
-  "message": "VERIFICATION_CODE_SENT",
-  "emailVerified": false
+  "token": "",
+  "email": "user@example.com",
+  "companyName": "Acme Ink."
 }
 ```
 
-- Важное поведение: НЕ выдавать `token` до подтверждения email (frontend ожидает именно такой flow).
-- Ошибки:
-  - 400 Bad Request — валидация (например, `VALIDATION_ERROR`).
-  - 409 Conflict — `EMAIL_ALREADY_EXISTS`.
-
+- Важное поведение: токен не выдается до подтверждения email.
 
 ---
 
@@ -72,37 +63,25 @@
 { "email": "user@example.com", "password": "secret123!" }
 ```
 
-- Response (email подтверждён): 200 OK
+- Response (успех): 200 OK
 
 ```json
-{ "token": "<JWT>", "user": { "id": "...", "email": "user@example.com", "companyName": "Acme" } }
+{ "token": "<JWT>", "email": "user@example.com", "companyName": "Acme" }
 ```
 
-- Response (email не подтверждён) — предпочтительный вариант (ясный контракт): 403 Forbidden
+- Response (email не подтвержден): 403 Forbidden
 
 ```json
-{
-  "error": "EMAIL_NOT_VERIFIED",
-  "message": "Email is not verified",
-  "user": { "id": "...", "email": "user@example.com" }
-}
-```
-
-> Альтернативно (фронт уже поддерживает): 200 OK, но без `token`:
->
-```json
-{ "user": { "email":"user@example.com" }, "message":"VERIFICATION_REQUIRED" }
+{ "error": "EMAIL_NOT_VERIFIED", "message": "Email is not verified" }
 ```
 
 - Ошибки:
   - 401 Unauthorized — `INVALID_CREDENTIALS`.
-  - 403 Forbidden — блокировка/прочие причины.
-
 
 ---
 
 ### C) POST /api/auth/verify-email
-- Описание: подтверждение email по коду; если код валидный — пометить `emailVerified=true` и вернуть `token`.
+- Описание: подтверждение email по коду; если код валидный — пометить `enabled=true` и выдать JWT.
 - Request:
 
 ```json
@@ -112,23 +91,15 @@
 - Response (успех): 200 OK
 
 ```json
-{
-  "token": "<JWT>",
-  "user": { "id":"...", "email":"user@example.com", "companyName":"Acme" },
-  "message": "EMAIL_VERIFIED"
-}
+{ "token": "<JWT>", "email": "user@example.com", "companyName": "Acme" }
 ```
 
 - Ошибки:
-  - 400 Bad Request — `INVALID_CODE_FORMAT` (не 6 цифр и т.п.).
-  - 401 Unauthorized — `INVALID_OR_EXPIRED_CODE`.
-  - 404 Not Found — `USER_NOT_FOUND`.
-  - 429 Too Many Requests — превышены попытки ввода кода.
-
+  - 400 Bad Request — `INVALID_OR_EXPIRED_CODE`.
 
 ---
 
-### D) POST /api/auth/verify-email/resend
+### D) POST /api/auth/resend-code
 - Описание: повторная отправка кода подтверждения на email.
 - Request:
 
@@ -139,12 +110,12 @@
 - Response (успех): 200 OK
 
 ```json
-{ "message": "VERIFICATION_CODE_RESENT" }
+{ "success": true, "email": "user@example.com" }
 ```
 
 - Ошибки:
   - 404 Not Found — `USER_NOT_FOUND`.
-  - 429 Too Many Requests — в пределах cooldown/лимита (например, cooldown 60s).
+  - 429 Too Many Requests — cooldown/лимиты (опционально).
 
 ---
 
@@ -200,7 +171,7 @@ curl -X POST https://api.example.com/api/auth/verify-email \
 
 Resend:
 ```bash
-curl -X POST https://api.example.com/api/auth/verify-email/resend \
+curl -X POST https://api.example.com/api/auth/resend-code \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com"}'
 ```
@@ -208,11 +179,11 @@ curl -X POST https://api.example.com/api/auth/verify-email/resend \
 ---
 
 ## 6. Что во фронтенде зависит от контракта
-- `src/api/auth.ts` — ожидает `token` / `user` / `message` в ответах.
-- `src/views/auth/RegisterView.vue` — после успешного `register` переходит на `/verify-email` и кладёт email в `sessionStorage.verificationEmail`.
-- `src/views/auth/VerifyEmailView.vue` — вызывает `/verify-email` и `/verify-email/resend`; на успешный ответ сохраняет `token` в `localStorage` и редиректит на `/dashboard`.
-- `src/views/auth/LoginView.vue` — если при логине приходит `token`, делает `localStorage.setItem('token', token)` и переходит на `/dashboard`; если приходит ошибка `EMAIL_NOT_VERIFIED` (или ответ без token), редиректит на `/verify-email`.
-- `src/router/index.ts` — guard проверяет наличие `localStorage.token` для доступа к `/dashboard`.
+- `src/api/auth.ts` — ожидает `token`, `email`, `companyName` в ответах.
+- `src/views/auth/RegisterView.vue` — после успешного `register` переходит на `/verify-email` и кладет email в `sessionStorage.verificationEmail`.
+- `src/views/auth/VerifyEmailView.vue` — вызывает `/verify-email` и `/resend-code`; на успешный ответ сохраняет `token` в `localStorage` и редиректит на `/dashboard`.
+- `src/views/auth/LoginView.vue` — если при логине приходит `token`, делает `localStorage.setItem('token', token)` и переходит на `/dashboard`; если приходит `EMAIL_NOT_VERIFIED`, редиректит на `/verify-email`.
+- `src/router/index.ts` — guard проверяет наличие `localStorage.token` или токена в auth store для доступа к `/dashboard`.
 
 ---
 
@@ -224,4 +195,3 @@ curl -X POST https://api.example.com/api/auth/verify-email/resend \
 ---
 
 Если нужно — могу сгенерировать OpenAPI (YAML) по этому контракту или короткий skeleton контроллера для Spring Boot с DTO и заглушками методов (Register/Login/Verify/Resend). Напишите, что предпочитаете.
-
