@@ -34,7 +34,7 @@ const closeMobileMenu = () => {
           <div class="flex items-start gap-3 mb-6">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/><path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/></svg>
             <div>
-              <div class="text-[20px] font-semibold text-[#42008A] leading-[1.2]">REPLAI</div>
+              <div class="text-[20px] font-semibold text-[#42008A] leading-[1.2]">replAI</div>
               <div class="text-[12px] text-[#424754] leading-[1.3]">Управление с помощью ИИ</div>
             </div>
           </div>
@@ -54,7 +54,7 @@ const closeMobileMenu = () => {
 
     <header class="lg:hidden sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-[rgba(66,0,138,0.12)] px-4 py-3 flex items-center justify-between">
       <div>
-        <div class="text-[18px] font-semibold text-[#42008A] leading-tight">REPLAI</div>
+        <div class="text-[18px] font-semibold text-[#42008A] leading-tight">replAI</div>
         <div class="text-[11px] text-[#424754]">Управление с помощью ИИ</div>
       </div>
       <button type="button" class="burger-btn" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Открыть меню">
@@ -66,7 +66,7 @@ const closeMobileMenu = () => {
       <div class="mobile-drawer bg-[#D7D3F6] h-full w-[280px] max-w-[85vw] p-5" @click.stop>
         <div class="flex items-start justify-between gap-4 mb-6">
           <div>
-            <div class="text-[20px] font-semibold text-[#42008A] leading-[1.2]">REPLAI</div>
+            <div class="text-[20px] font-semibold text-[#42008A] leading-[1.2]">replAI</div>
             <div class="text-[12px] text-[#424754] leading-[1.3]">Управление с помощью ИИ</div>
           </div>
           <button type="button" class="text-[#42008A] text-[28px] leading-none" @click="closeMobileMenu">×</button>
