@@ -105,7 +105,7 @@ const handleResend = async () => {
     errorMessage.value = ''
     successMessage.value = ''
 
-    await authApi.resendVerificationCode({
+    await authApi.resendCode({
       email: verificationEmail.value
     })
 
