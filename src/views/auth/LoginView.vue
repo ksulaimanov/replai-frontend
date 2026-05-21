@@ -61,7 +61,7 @@ const handleLogin = async () => {
           <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
           <path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/>
         </svg>
-        <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">REPLAI</span>
+        <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">replAI</span>
       </div>
 
       <p class="text-[16px] font-normal text-[#000000] leading-[19px] text-center mt-[11px] mb-[40px] w-full max-w-[336px]">
@@ -70,7 +70,7 @@ const handleLogin = async () => {
 
       <form @submit.prevent="handleLogin" class="flex flex-col w-full max-w-[453px]">
         <div class="flex flex-col mb-[25px]">
-          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Email Adress</label>
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Email</label>
           <input
               v-model="email"
               type="email"
@@ -80,7 +80,7 @@ const handleLogin = async () => {
         </div>
 
         <div class="flex flex-col relative mb-[12px]">
-          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Password</label>
+          <label class="text-[16px] font-normal text-[#000000] leading-[19px] mb-[9px]">Пароль</label>
           <div class="relative w-full">
             <input
                 v-model="password"
