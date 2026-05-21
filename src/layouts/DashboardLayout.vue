@@ -23,6 +23,13 @@ const getIconClass = (path: string, exact = false) => (isActive(path, exact) ? '
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
+
+function handleNavClick(e: Event) {
+  const btn = e.currentTarget as HTMLElement
+  if (!btn) return
+  btn.classList.add('menu-btn--clicked')
+  setTimeout(() => btn.classList.remove('menu-btn--clicked'), 320)
+}
 </script>
 
 <template>
@@ -40,7 +47,7 @@ const closeMobileMenu = () => {
 
           <nav class="mt-6 flex flex-col gap-3">
             <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="block outline-none">
-              <button class="menu-btn" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
+              <button class="menu-btn" @click="handleNavClick" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
                 <span v-if="item.svg" :class="getIconClass(item.to, item.exact)" v-html="item.svg"></span>
                 <img v-else :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
                 <span class="font-semibold">{{ item.label }}</span>
@@ -73,7 +80,7 @@ const closeMobileMenu = () => {
 
         <nav class="flex flex-col gap-3">
           <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" class="block outline-none" @click="closeMobileMenu">
-            <button class="menu-btn" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
+            <button class="menu-btn" @click="handleNavClick" :class="isActive(item.to, item.exact) ? 'menu-btn--active' : 'menu-btn--ghost'">
               <img :src="item.icon" :alt="item.label" :class="getIconClass(item.to, item.exact)" />
               <span class="font-semibold">{{ item.label }}</span>
             </button>
@@ -83,7 +90,9 @@ const closeMobileMenu = () => {
     </div>
 
     <main class="main-content relative z-10 ml-0 lg:ml-[264px] p-4 lg:p-8 xl:pr-16 w-full lg:w-auto overflow-hidden">
-      <slot />
+      <Transition name="route" mode="out-in">
+        <slot />
+      </Transition>
     </main>
   </div>
 </template>
