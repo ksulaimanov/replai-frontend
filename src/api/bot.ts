@@ -28,6 +28,16 @@ export interface Lead {
     phone: string | null
     externalChatId: string
     createdAt: string
+    chatId: number | null
+    status: 'ACTIVE' | 'HOT_LEAD'
+    leadSummary: string | null
+}
+
+export interface MessageResponse {
+    id: number
+    content: string
+    isFromClient: boolean
+    timestamp: string
 }
 
 export interface Analytics {
@@ -81,6 +91,11 @@ export async function getAnalytics(): Promise<Analytics> {
     return response.data
 }
 
+export async function getChatMessages(chatId: number): Promise<MessageResponse[]> {
+    const response = await http.get<MessageResponse[]>(`/api/chats/${chatId}/messages`)
+    return response.data
+}
+
 export const botApi = {
     getBotConfig,
     updateBotConfig,
@@ -90,4 +105,5 @@ export const botApi = {
     connectTelegramIntegration,
     getLeads,
     getAnalytics,
+    getChatMessages,
 }
