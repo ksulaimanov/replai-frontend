@@ -73,7 +73,12 @@ const bars = computed(() => [
             </div>
             <span v-else>{{ analytics.totalMessages.toLocaleString('ru-RU') }}</span>
           </div>
-          <div class="stat-note">Входящие + исходящие</div>
+          <div class="stat-note">
+            <template v-if="!loading && analytics.totalMessages === 0">
+              <RouterLink to="/integrations" class="underline underline-offset-2 hover:opacity-80">Каналы не подключены. Подключить бот →</RouterLink>
+            </template>
+            <template v-else>Входящие + исходящие</template>
+          </div>
         </div>
 
         <!-- Card 2 -->
@@ -85,7 +90,12 @@ const bars = computed(() => [
             </div>
             <span v-else>{{ analytics.uniqueChats.toLocaleString('ru-RU') }}</span>
           </div>
-          <div class="stat-note">Активные чаты бота</div>
+          <div class="stat-note">
+            <template v-if="!loading && analytics.uniqueChats === 0">
+              <RouterLink to="/integrations" class="underline underline-offset-2 hover:opacity-80">Каналы не подключены. Подключить бот →</RouterLink>
+            </template>
+            <template v-else>Активные чаты бота</template>
+          </div>
         </div>
 
         <!-- Card 3 -->
@@ -98,7 +108,10 @@ const bars = computed(() => [
             <span v-else>{{ analytics.leads.toLocaleString('ru-RU') }}</span>
           </div>
           <div class="stat-note">
-            <RouterLink to="/leads" class="underline underline-offset-2 hover:opacity-80">Смотреть все →</RouterLink>
+            <template v-if="!loading && analytics.leads === 0">
+              <RouterLink to="/integrations" class="underline underline-offset-2 hover:opacity-80">Каналы не подключены. Подключить бот →</RouterLink>
+            </template>
+            <RouterLink v-else to="/leads" class="underline underline-offset-2 hover:opacity-80">Смотреть все →</RouterLink>
           </div>
         </div>
       </div>

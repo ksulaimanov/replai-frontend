@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { authApi } from '@/api/auth'
 
@@ -11,6 +11,23 @@ const isLoading = ref(false)
 const isResending = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const resendCooldown = ref(0)
+let cooldownTimer: ReturnType<typeof setInterval> | null = null
+
+function startCooldown() {
+  resendCooldown.value = 60
+  cooldownTimer = setInterval(() => {
+    resendCooldown.value--
+    if (resendCooldown.value <= 0) {
+      clearInterval(cooldownTimer!)
+      cooldownTimer = null
+    }
+  }, 1000)
+}
+
+onUnmounted(() => {
+  if (cooldownTimer) clearInterval(cooldownTimer)
+})
 
 const verificationEmail = computed(() => {
   const queryEmail = route.query.email
@@ -110,6 +127,7 @@ const handleResend = async () => {
     })
 
     successMessage.value = 'Новый код отправлен на email'
+    startCooldown()
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Не удалось отправить код повторно'
   } finally {
@@ -176,8 +194,15 @@ const handleResend = async () => {
 
         <div class="flex flex-wrap items-center justify-center gap-x-[6px] gap-y-1 text-[16px] leading-[19px] text-center">
           <span class="text-[#000000]">Не получили код?</span>
-          <button type="button" @click="handleResend" :disabled="isResending" class="text-[#42008A] hover:underline disabled:opacity-70">
-            {{ isResending ? 'Отправляем...' : 'Отправить повторно' }}
+          <button
+            type="button"
+            @click="handleResend"
+            :disabled="isResending || resendCooldown > 0"
+            class="text-[#42008A] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span v-if="isResending">Отправляем…</span>
+            <span v-else-if="resendCooldown > 0">Отправить повторно ({{ resendCooldown }}с)</span>
+            <span v-else>Отправить повторно</span>
           </button>
         </div>
       </div>
