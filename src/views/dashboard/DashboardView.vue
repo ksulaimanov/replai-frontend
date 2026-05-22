@@ -51,8 +51,8 @@ const bars = computed(() => [
     <div>
       <div class="header-row flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <div class="text-[18px] font-semibold text-[#424754] leading-[1.2]">Добро пожаловать</div>
-          <h1 class="text-[32px] font-semibold text-[#42008A] mt-4 leading-[1.1]">Дашборд</h1>
+          <div class="text-[11px] font-semibold text-[#7c6fa0] uppercase tracking-[0.09em]">Добро пожаловать</div>
+          <h1 class="text-[30px] font-bold text-[#1e0050] mt-1 leading-[1.1] tracking-tight">Дашборд</h1>
         </div>
 
         <div class="header-actions flex items-center gap-4 flex-wrap justify-end">
@@ -153,22 +153,26 @@ const bars = computed(() => [
       <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
         <RouterLink to="/leads">
           <div class="quick-card group">
-            <div class="quick-icon">📋</div>
+            <div class="quick-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#42008A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
             <div>
               <div class="quick-title">База лидов</div>
               <div class="quick-sub">Контакты, собранные ботом</div>
             </div>
-            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </RouterLink>
         <RouterLink to="/test-ai">
           <div class="quick-card group">
-            <div class="quick-icon">🤖</div>
+            <div class="quick-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#42008A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><path d="M9 7h6"/><circle cx="8.5" cy="16" r="1" fill="#42008A"/><circle cx="15.5" cy="16" r="1" fill="#42008A"/></svg>
+            </div>
             <div>
               <div class="quick-title">Тест AI</div>
               <div class="quick-sub">Диалог с вашим ботом</div>
             </div>
-            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="ml-auto text-[#9A7CC2] group-hover:translate-x-1 transition-transform" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
         </RouterLink>
       </div>
@@ -178,25 +182,37 @@ const bars = computed(() => [
 
 <style scoped>
 .action-btn-link { display: inline-flex; }
-.action-btn { background: #42008A; color: #FFFFFF; border-radius: 10px; padding: 10px 16px; font-weight: 600; white-space: nowrap; }
+.action-btn {
+  background: #42008A; color: #FFFFFF; border-radius: 10px; padding: 10px 18px;
+  font-size: 13px; font-weight: 600; white-space: nowrap; border: none; cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.action-btn:hover { background: #350070; transform: translateY(-1px); }
+.action-btn:active { transform: scale(0.97); }
 
 .stat-card {
-  min-height: 189px; border-radius: 15px; padding: 28px 32px;
-  background: linear-gradient(119.01deg, #D7D3F6 32.05%, rgba(66, 0, 138, 0.69) 92.25%);
+  min-height: 162px; border-radius: 16px; padding: 24px 28px;
+  background: linear-gradient(135deg, #edeaff 0%, #ddd6fe 55%, rgba(109, 40, 217, 0.28) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.14);
+  transition: box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.stat-title { font-size: 18px; font-weight: 500; color: #000; }
-.stat-value { margin-top: 28px; font-size: 28px; font-weight: 600; color: #000; }
-.stat-note { margin-top: 36px; font-size: 16px; font-weight: 600; color: #42008A; }
+.stat-card:hover { box-shadow: 0 8px 32px -8px rgba(66, 0, 138, 0.18); transform: translateY(-2px); }
+.stat-title { font-size: 11px; font-weight: 600; color: #5a4d8a; text-transform: uppercase; letter-spacing: 0.07em; }
+.stat-value { margin-top: 16px; font-size: 36px; font-weight: 700; color: #1e0050; line-height: 1; }
+.stat-note { margin-top: 14px; font-size: 13px; font-weight: 500; color: #42008A; opacity: 0.75; }
 
 .quick-card {
   display: flex; align-items: center; gap: 14px;
-  background: #F4EFFF; border-radius: 14px; padding: 18px 20px;
-  cursor: pointer; transition: box-shadow 0.2s;
+  background: #f6f2ff; border-radius: 14px; padding: 16px 18px;
+  cursor: pointer;
+  border: 1px solid rgba(66, 0, 138, 0.08);
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
-.quick-card:hover { box-shadow: 0 4px 20px rgba(66,0,138,0.12); }
-.quick-icon { font-size: 24px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 10px; flex-shrink: 0; }
-.quick-title { font-size: 15px; font-weight: 600; color: #42008A; }
-.quick-sub { font-size: 13px; color: #6B7280; margin-top: 2px; }
+.quick-card:hover { box-shadow: 0 4px 24px rgba(66,0,138,0.1); transform: translateY(-1px); border-color: rgba(66,0,138,0.14); }
+.quick-card:active { transform: scale(0.99); }
+.quick-icon { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 10px; flex-shrink: 0; border: 1px solid rgba(66,0,138,0.08); }
+.quick-title { font-size: 14px; font-weight: 600; color: #1e0050; }
+.quick-sub { font-size: 12px; color: #7c6fa0; margin-top: 2px; }
 
 @media (max-width: 768px) {
   .header-actions { justify-content: flex-start; }

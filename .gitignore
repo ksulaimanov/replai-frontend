@@ -41,3 +41,7 @@ __screenshots__/
 .env
 .copilotignore
 .junie
+
+.agents/
+.agents/skills/
+skills-lock.json

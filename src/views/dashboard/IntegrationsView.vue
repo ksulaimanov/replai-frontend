@@ -186,7 +186,7 @@ const telegramButtonLabel = computed(() => (isTelegramSaving.value ? 'Прове
 .page-title { font-size: 32px; line-height: 1.1; font-weight: 700; color: #42008A; }
 .page-subtitle { color: #424754; font-size: 14px; line-height: 1.5; max-width: 760px; }
 .cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.integration-card { background: rgba(139, 92, 246, 0.1); border-radius: 15px; padding: 40px 40px 32px; min-height: 376px; display: flex; flex-direction: column; }
+.integration-card { background: #faf8ff; border: 1px solid rgba(66, 0, 138, 0.09); border-radius: 16px; padding: 36px 36px 28px; min-height: 376px; display: flex; flex-direction: column; }
 .card-head { display: flex; align-items: center; gap: 20px; }
 .card-head__content { flex: 1; padding-top: 0; }
 .service-badge { width: 52px; height: 52px; border-radius: 9999px; background: #DFD1FD; display: flex; align-items: center; justify-content: center; color: #000; flex: 0 0 auto; }
@@ -201,14 +201,16 @@ const telegramButtonLabel = computed(() => (isTelegramSaving.value ? 'Прове
 .status-pill--confirmed { background: #E8E3F8; color: #42008A; }
 .status-pill--confirmed-on { background: #D3F6E3; color: #127336; }
 .status-pill--confirmed-off { background: #F0F0F4; color: #6B7280; }
-.toggle { width: 48px; height: 24px; border-radius: 9999px; padding: 4px; display: flex; align-items: center; border: none; }
-.toggle--on { background: #0058BE; justify-content: flex-end; }
-.toggle--off { background: #E1E2EC; justify-content: flex-start; }
-.toggle__knob { width: 16px; height: 16px; border-radius: 9999px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.toggle { width: 48px; height: 24px; border-radius: 9999px; padding: 4px; display: flex; align-items: center; border: none; cursor: pointer; transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+.toggle--on { background: #42008A; justify-content: flex-end; }
+.toggle--off { background: #D5D0E0; justify-content: flex-start; }
+.toggle:disabled { cursor: not-allowed; opacity: 0.6; }
+.toggle__knob { width: 16px; height: 16px; border-radius: 9999px; background: #FFFFFF; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18); }
 .field-block { margin-top: 28px; }
 .field-label { display: block; margin-bottom: 12px; font-size: 14px; line-height: 1.4; color: #000; }
-.text-input { width: 100%; height: 40px; border: 1px solid rgba(66, 0, 138, 0.69); border-radius: 10px; padding: 0 16px; background: transparent; font-size: 14px; color: #191B23; outline: none; }
-.text-input:disabled { opacity: 1; color: #6B7280; cursor: not-allowed; }
+.text-input { width: 100%; height: 40px; border: 1px solid rgba(66, 0, 138, 0.3); border-radius: 10px; padding: 0 16px; background: white; font-size: 14px; color: #191B23; outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+.text-input:focus { border-color: #42008A; box-shadow: 0 0 0 3px rgba(66, 0, 138, 0.1); }
+.text-input:disabled { opacity: 1; color: #6B7280; cursor: not-allowed; background: #f9f8fc; border-color: rgba(66, 0, 138, 0.12); }
 .text-input--mono { font-family: 'Liberation Mono', monospace; }
 .text-input--error { border-color: #DC2626; }
 .field-message { margin-top: 10px; font-size: 12px; line-height: 1.4; color: #000; }

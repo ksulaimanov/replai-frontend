@@ -233,13 +233,13 @@ function exportCsv() {
                 <td class="px-4 py-4">
                   <span
                     v-if="lead.status === 'HOT_LEAD'"
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-red-100 text-red-700"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-rose-50 text-rose-600 border border-rose-100"
                   >
-                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 hot-dot"></span>
                     Горячий
                   </span>
-                  <span v-else class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[rgba(66,0,138,0.08)] text-[#42008A]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#42008A] opacity-60"></span>
+                  <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[rgba(66,0,138,0.07)] text-[#42008A]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#42008A]" style="opacity:0.5"></span>
                     Активный
                   </span>
                 </td>
@@ -264,13 +264,14 @@ function exportCsv() {
 
     <!-- Chat History Panel -->
     <Teleport to="body">
+      <Transition name="chat-drawer">
       <div v-if="selectedLead" class="fixed inset-0 z-50 flex" @keydown.esc="closeChat">
 
         <!-- Backdrop -->
         <div class="flex-1 bg-black/40 backdrop-blur-sm" @click="closeChat"></div>
 
         <!-- Drawer -->
-        <div class="w-full max-w-[420px] bg-white flex flex-col shadow-2xl">
+        <div class="drawer-panel w-full max-w-[420px] bg-white flex flex-col shadow-2xl">
 
           <!-- Header -->
           <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-3 bg-[#F4EFFF]">
@@ -296,9 +297,9 @@ function exportCsv() {
 
             <span
               v-if="selectedLead.status === 'HOT_LEAD'"
-              class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-700"
+              class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-100"
             >
-              <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 hot-dot"></span>
               HOT
             </span>
           </div>
@@ -344,6 +345,7 @@ function exportCsv() {
           </div>
         </div>
       </div>
+      </Transition>
     </Teleport>
   </DashboardLayout>
 </template>
@@ -356,4 +358,31 @@ table { border-collapse: collapse; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Noble pulse — едва заметная, без детского bounciness */
+@keyframes noble-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+.hot-dot {
+  animation: noble-pulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Drawer slide-in animation (Emil Kowalski style) */
+.chat-drawer-enter-active {
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chat-drawer-enter-active .drawer-panel {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chat-drawer-leave-active {
+  transition: opacity 0.18s ease-in;
+}
+.chat-drawer-leave-active .drawer-panel {
+  transition: transform 0.18s ease-in;
+}
+.chat-drawer-enter-from { opacity: 0; }
+.chat-drawer-enter-from .drawer-panel { transform: translateX(100%); }
+.chat-drawer-leave-to { opacity: 0; }
+.chat-drawer-leave-to .drawer-panel { transform: translateX(100%); }
 </style>

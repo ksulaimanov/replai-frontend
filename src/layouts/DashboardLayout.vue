@@ -47,7 +47,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <div class="dashboard-layout min-h-screen bg-white text-[#111827] font-['Inter']">
+  <div class="dashboard-layout min-h-screen bg-white text-[#111827]">
 
     <!-- ── DESKTOP SIDEBAR ── -->
     <aside class="sidebar hidden lg:block fixed left-4 top-4 bottom-4 w-[232px] z-20">
@@ -74,20 +74,17 @@ function handleLogout() {
           </nav>
         </div>
 
-        <!-- Bottom: user profile + logout -->
-        <div class="border-t border-[rgba(66,0,138,0.2)] pt-4">
-          <div class="flex items-center gap-2 mb-3 px-2">
-            <div class="w-8 h-8 rounded-full bg-[#42008A] flex items-center justify-center text-white text-[13px] font-bold shrink-0">
+        <!-- Bottom: user profile (monolithic) -->
+        <div class="border-t border-[rgba(66,0,138,0.15)] pt-3">
+          <button class="profile-block" @click="handleLogout" title="Выйти из аккаунта">
+            <div class="w-8 h-8 rounded-full bg-[#42008A] flex items-center justify-center text-white text-[12px] font-semibold shrink-0 select-none">
               {{ userInitial }}
             </div>
-            <span class="text-[12px] text-[#424754] truncate leading-tight">{{ userEmail || 'Профиль' }}</span>
-          </div>
-          <button
-            @click="handleLogout"
-            class="w-full flex items-center gap-2 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold text-[#42008A] hover:bg-[rgba(66,0,138,0.08)] transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Выйти
+            <div class="flex-1 min-w-0 text-left">
+              <div class="text-[12px] font-medium text-[#2e2a3b] truncate leading-tight">{{ userEmail || 'Профиль' }}</div>
+              <div class="text-[11px] text-[#42008A] mt-[2px]" style="opacity:0.55">Выйти</div>
+            </div>
+            <svg class="shrink-0 text-[#42008A]" style="opacity:0.4" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
       </div>
@@ -127,20 +124,17 @@ function handleLogout() {
           </nav>
         </div>
 
-        <!-- Mobile: user + logout -->
-        <div class="border-t border-[rgba(66,0,138,0.2)] pt-4">
-          <div class="flex items-center gap-2 mb-3 px-2">
-            <div class="w-8 h-8 rounded-full bg-[#42008A] flex items-center justify-center text-white text-[13px] font-bold shrink-0">
+        <!-- Mobile: user (monolithic) -->
+        <div class="border-t border-[rgba(66,0,138,0.15)] pt-3">
+          <button class="profile-block" @click="handleLogout(); closeMobileMenu()" title="Выйти из аккаунта">
+            <div class="w-8 h-8 rounded-full bg-[#42008A] flex items-center justify-center text-white text-[12px] font-semibold shrink-0 select-none">
               {{ userInitial }}
             </div>
-            <span class="text-[12px] text-[#424754] truncate">{{ userEmail || 'Профиль' }}</span>
-          </div>
-          <button
-            @click="handleLogout(); closeMobileMenu()"
-            class="w-full flex items-center gap-2 px-4 py-2.5 rounded-[10px] text-[13px] font-semibold text-[#42008A] hover:bg-[rgba(66,0,138,0.08)] transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Выйти
+            <div class="flex-1 min-w-0 text-left">
+              <div class="text-[12px] font-medium text-[#2e2a3b] truncate leading-tight">{{ userEmail || 'Профиль' }}</div>
+              <div class="text-[11px] text-[#42008A] mt-[2px]" style="opacity:0.55">Выйти</div>
+            </div>
+            <svg class="shrink-0 text-[#42008A]" style="opacity:0.4" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
       </div>
@@ -155,18 +149,44 @@ function handleLogout() {
 </template>
 
 <style scoped>
-.sidebar-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.02); }
+.sidebar-card { box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 4px 24px rgba(66,0,138,0.06); }
 .menu-btn {
-  width: 100%; min-height: 47px; border-radius: 10px; display: flex; align-items: center; gap: 12px;
-  padding: 0 16px; text-align: left; border: none; outline: none; background-color: transparent;
-  transition: all 0.2s ease-in-out;
+  width: 100%; min-height: 44px; border-radius: 10px; display: flex; align-items: center; gap: 12px;
+  padding: 0 14px; text-align: left; border: none; outline: none; background-color: transparent;
+  transition: background 0.16s cubic-bezier(0.16, 1, 0.3, 1), transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
-.menu-btn--active { background: linear-gradient(180deg, rgba(66, 0, 138, 0.8) 0%, rgba(17, 0, 36, 0.8) 100%); color: #FFFFFF; }
+.menu-btn--active {
+  background: linear-gradient(160deg, rgba(66, 0, 138, 0.82) 0%, rgba(17, 0, 36, 0.88) 100%);
+  color: #FFFFFF;
+}
 .menu-btn--ghost { color: #42008A; background: transparent; }
-.menu-btn--ghost:hover { background: rgba(66, 0, 138, 0.05); }
-.menu-icon { width: 32px; height: 32px; object-fit: contain; flex: 0 0 auto; transition: filter 0.2s ease-in-out; }
+.menu-btn--ghost:hover { background: rgba(66, 0, 138, 0.06); transform: translateX(2px); }
+.menu-btn--ghost:active { transform: scale(0.98); }
+.menu-icon { width: 28px; height: 28px; object-fit: contain; flex: 0 0 auto; transition: filter 0.16s ease; }
 .menu-icon--active { filter: brightness(0) invert(1); }
-.burger-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(66,0,138,0.18); display: inline-flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; background: white; }
-.burger-btn span { width: 18px; height: 2px; background: #42008A; border-radius: 9999px; }
-.mobile-drawer { box-shadow: 12px 0 40px rgba(0,0,0,0.16); }
+.burger-btn {
+  width: 38px; height: 38px; border-radius: 9px; border: 1px solid rgba(66,0,138,0.15);
+  display: inline-flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px;
+  background: white; transition: border-color 0.15s ease;
+}
+.burger-btn:hover { border-color: rgba(66,0,138,0.3); }
+.burger-btn span { width: 16px; height: 1.5px; background: #42008A; border-radius: 9999px; }
+.mobile-drawer { box-shadow: 12px 0 48px rgba(0,0,0,0.18); }
+
+/* Monolithic profile block */
+.profile-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.16s cubic-bezier(0.16, 1, 0.3, 1), transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.profile-block:hover { background: rgba(66, 0, 138, 0.07); }
+.profile-block:active { transform: scale(0.98); }
 </style>
