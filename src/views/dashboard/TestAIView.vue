@@ -9,9 +9,7 @@ interface Message {
   time: string
 }
 
-const messages = ref<Message[]>([
-  { role: 'bot', text: 'Привет! Я Алина, менеджер по продажам. Чем могу помочь? 😊', time: now() }
-])
+const messages = ref<Message[]>([])
 const input = ref('')
 const loading = ref(false)
 const chatBox = ref<HTMLElement | null>(null)
@@ -69,9 +67,9 @@ function handleKey(e: KeyboardEvent) {
 
         <!-- Шапка -->
         <div class="flex items-center gap-3 px-6 py-4 border-b border-[rgba(66,0,138,0.12)]">
-          <div class="w-9 h-9 rounded-full bg-[#42008A] flex items-center justify-center text-white font-bold text-[14px] shrink-0">А</div>
+          <div class="w-9 h-9 rounded-full bg-[#42008A] flex items-center justify-center text-white font-bold text-[14px] shrink-0">Б</div>
           <div>
-            <div class="font-semibold text-[#42008A] text-[15px] leading-tight">Алина</div>
+            <div class="font-semibold text-[#42008A] text-[15px] leading-tight">бот</div>
             <div class="text-[11px] text-[#127336] font-medium flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-[#127336] inline-block"></span> Онлайн
             </div>
@@ -79,7 +77,13 @@ function handleKey(e: KeyboardEvent) {
         </div>
 
         <!-- Сообщения -->
-        <div ref="chatBox" class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3 scroll-smooth">
+        <div ref="chatBox" class="relative flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3 scroll-smooth">
+          <div
+            v-if="messages.length === 0"
+            class="absolute inset-0 flex items-center justify-center text-[18px] font-medium text-[#42008A] opacity-35 pointer-events-none select-none"
+          >
+            Начните чат
+          </div>
           <div v-for="(msg, i) in messages" :key="i"
                :class="['flex', msg.role === 'user' ? 'justify-end' : 'justify-start']">
             <div :class="[
