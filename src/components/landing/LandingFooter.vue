@@ -39,10 +39,17 @@
 
         <div class="footer-col">
           <h3 class="footer-col__title">Контакты</h3>
-          <a href="mailto:hello@replai.ai" class="footer-col__link">hello@replai.ai</a>
+          <a href="mailto:ksulaimanov.dev@gmail.com" class="footer-col__link">ksulaimanov.dev@gmail.com</a>
+          <a href="https://t.me/ksulaimanov" target="_blank" rel="noopener" class="footer-col__link">@ksulaimanov</a>
 
           <div class="footer-socials">
-            <a href="#" class="footer-social" aria-label="Telegram">
+            <a
+              href="https://t.me/ksulaimanov"
+              target="_blank"
+              rel="noopener"
+              class="footer-social"
+              aria-label="Telegram"
+            >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M4 12L20 4L16 20L11 13L4 12Z"
@@ -50,16 +57,6 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
-              </svg>
-            </a>
-            <a href="#" class="footer-social" aria-label="Menu">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M4 6H20M4 12H20M4 18H14"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
                 />
               </svg>
             </a>
