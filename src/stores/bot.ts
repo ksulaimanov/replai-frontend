@@ -18,8 +18,8 @@ export const useBotStore = defineStore('bot', () => {
     try {
       const config = await botApi.getBotConfig()
       if (config) {
-        botConfig.name = config.name
-        botConfig.prompt = config.prompt
+        botConfig.name = config.name ?? ''
+        botConfig.prompt = config.prompt ?? ''
         if (config.id) {
           botConfig.id = config.id
         }
@@ -50,8 +50,8 @@ export const useBotStore = defineStore('bot', () => {
     error.value = null
     try {
       const updatedConfig = await botApi.updateBotConfig(config)
-      botConfig.name = updatedConfig.name
-      botConfig.prompt = updatedConfig.prompt
+      botConfig.name = updatedConfig.name ?? ''
+      botConfig.prompt = updatedConfig.prompt ?? ''
       if (updatedConfig.id) {
         botConfig.id = updatedConfig.id
       }

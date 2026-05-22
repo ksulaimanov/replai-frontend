@@ -34,17 +34,17 @@ const loadData = async () => {
   await botStore.loadFiles()
 }
 
-const canSave = computed(() => botStore.botConfig.name.trim().length > 0 && botStore.botConfig.prompt.trim().length > 0)
+const canSave = computed(() => (botStore.botConfig.name ?? '').trim().length > 0 && (botStore.botConfig.prompt ?? '').trim().length > 0)
 
 const saveChanges = async () => {
   validationError.value = ''
 
-  if (!botStore.botConfig.name.trim()) {
+  if (!(botStore.botConfig.name ?? '').trim()) {
     validationError.value = 'Пожалуйста, заполните поле "Имя Бота"'
     return
   }
 
-  if (!botStore.botConfig.prompt.trim()) {
+  if (!(botStore.botConfig.prompt ?? '').trim()) {
     validationError.value = 'Пожалуйста, заполните поле "Системный Промпт"'
     return
   }
