@@ -13,17 +13,7 @@ const closeMenu = () => {
   <header class="landing-header">
     <div class="landing-header__inner">
       <RouterLink to="/" class="landing-brand" @click="closeMenu">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"
-            fill="#42008A"
-          />
-          <path
-            d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z"
-            fill="#42008A"
-          />
-        </svg>
-        <span>REPLAI</span>
+        <img src="/mainlogo.png" alt="replai" class="h-[56px] object-contain" />
       </RouterLink>
 
       <nav class="landing-header__actions landing-header__actions--desktop" aria-label="Навигация">

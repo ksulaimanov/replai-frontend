@@ -50,11 +50,7 @@ const handleRegister = async () => {
   <AuthLayout>
     <div class="w-full bg-white shadow-[5px_5px_4px_rgba(0,0,0,0.09)] rounded-[30px] p-6 sm:p-10 lg:w-[558px] lg:h-[691px] flex flex-col items-center justify-center relative mx-auto">
       <div class="flex items-center justify-center gap-[4px]">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#42008A"/>
-          <path d="M19.5 16.5L20.65 19.35L23.5 20.5L20.65 21.65L19.5 24.5L18.35 21.65L15.5 20.5L18.35 19.35L19.5 16.5Z" fill="#42008A"/>
-        </svg>
-        <span class="text-[24px] font-semibold text-[#42008A] leading-[29px]">replAI</span>
+        <img src="/mainlogo.png" alt="replai" class="h-[72px] object-contain" />
       </div>
 
       <p class="text-[16px] font-normal text-[#000000] leading-[19px] text-center mt-[11px] mb-[30px] w-full">
