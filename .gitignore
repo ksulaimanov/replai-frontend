@@ -45,3 +45,5 @@ __screenshots__/
 .agents/
 .agents/skills/
 skills-lock.json
+
+Thumbs.db
