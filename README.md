@@ -6,51 +6,51 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Pinia](https://img.shields.io/badge/Pinia-2.x-F7D336?logo=pinia&logoColor=white)](https://pinia.vuejs.org/)
 
-> Премиальный SPA-дашборд для управления AI-ботами, мониторинга лидов и настройки базы знаний. Дизайн-система в стиле Linear / Vercel.
+> Premium SPA dashboard for managing AI bots, monitoring leads, and configuring the Knowledge Base. Design system inspired by Linear and Vercel.
 
 ---
 
-## Особенности интерфейса
+## Interface Highlights
 
-### Дизайн-система
-- Шрифт **Plus Jakarta Sans** (Google Fonts) — современный, читаемый, технологичный
-- Брендовая цветовая палитра `#42008A` / `#1a1523` с мягкими градиентами
-- Sidebar-навигация с `cubic-bezier(0.16, 1, 0.3, 1)` — Emil Kowalski motion style (Linear/Vercel)
-- Нет bounce-анимаций — только precision transitions, подходящие для B2B
+### Design System
+- **Plus Jakarta Sans** typeface (Google Fonts) — modern, legible, tech-forward
+- Brand color palette `#42008A` / `#1a1523` with subtle gradients
+- Sidebar navigation with `cubic-bezier(0.16, 1, 0.3, 1)` — Emil Kowalski motion style (Linear / Vercel)
+- No bounce animations — precision transitions only, appropriate for B2B productivity dashboards
 
 ### Live Lead Inbox
-Входящие сообщения Telegram в реальном времени. Горячие лиды помечаются `HOT_LEAD` с пульсирующим бейджем (`noble-pulse` keyframe, scale + opacity, 2.6s). Клик на строке открывает slide-in drawer с полной историей переписки — анимация `translateX(100%)` за 300ms.
+Incoming Telegram messages displayed in real time. Hot leads are flagged `HOT_LEAD` with a pulsing badge (`noble-pulse` keyframe, scale + opacity, 2.6s). Clicking a row opens a slide-in drawer with full conversation history — `translateX(100%)` animation over 300ms.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  Leads Inbox                          [HOT] · [ACTIVE]      │
 ├────────────────────────────────────┬─────────────────────────┤
-│  +7 (912) 847-1928  · Иван М.      │  ← click → drawer      │
-│  [HOT_LEAD] Хочу купить...         │  Full chat history      │
+│  +7 (912) 847-1928  · Ivan M.      │  ← click → drawer      │
+│  [HOT_LEAD] I want to buy...       │  Full chat history      │
 ├────────────────────────────────────┤  translateX slide-in    │
-│  +7 (495) 123-4567  · Анна К.      │                         │
-│  [ACTIVE]  Подскажите по...        │                         │
+│  +7 (495) 123-4567  · Anna K.      │                         │
+│  [ACTIVE]  Could you advise...     │                         │
 └────────────────────────────────────┴─────────────────────────┘
 ```
 
-### Null-Safety (Safe Navigation)
-Бэкенд возвращает `null` для полей нового бота. Стор применяет коалесцентную нормализацию на границе входа данных:
+### Defensive UI States & Zero-State Handlers
+Defensive UI states and zero-state handlers for uninitialized databases: the backend returns `null` for fields of a newly created bot. The store applies coalescent normalization at the data-entry boundary:
 ```typescript
 botConfig.name   = config.name   ?? ''
 botConfig.prompt = config.prompt ?? ''
 ```
-Исключает `TypeError: Cannot read properties of undefined (reading 'trim')` для чистой БД нового пользователя.
+This eliminates `TypeError: Cannot read properties of undefined (reading 'trim')` for a clean database belonging to a new user.
 
 ### Automation Dashboard
-- Computed `canSave` с null-safe `.trim()` — кнопка сохранения неактивна до ввода корректных данных
-- Прямой вызов `PUT /api/bot/config` без промежуточных стейт-машин
+- Computed `canSave` with null-safe `.trim()` — the save button remains disabled until valid data is entered
+- Direct `PUT /api/bot/config` call without intermediate state machines
 
 ---
 
-## Структура роутинга
+## Routing Structure
 
 ```
-/                    → HomeView (публичный)
+/                    → HomeView (public)
 /login               → LoginView
 /register            → RegisterView
 /verify-email        → VerifyEmailView
@@ -61,18 +61,18 @@ botConfig.prompt = config.prompt ?? ''
 /test-ai             → TestAIView          ← requiresAuth
 ```
 
-Роуты с `meta: { requiresAuth: true }` защищены навигационным guard-ом — редирект на `/login` при отсутствии JWT.
+Routes with `meta: { requiresAuth: true }` are protected by a navigation guard — redirects to `/login` when no JWT is present.
 
 ---
 
-## Локальная разработка
+## Local Development
 
-### Требования
+### Prerequisites
 
 - Node.js 20.x+
 - npm 9+
 
-### Установка и запуск
+### Install & Run
 
 ```bash
 git clone https://github.com/ksulaimanov/replai-frontend.git
@@ -80,49 +80,49 @@ cd replai-frontend
 npm install
 ```
 
-Создайте `.env.local`:
+Create `.env.local`:
 ```env
 VITE_API_URL=http://localhost:8080
 ```
 
 ```bash
-npm run dev          # dev-сервер на http://localhost:5173
-npm run build        # production-сборка → dist/
-npm run preview      # превью production-сборки
+npm run dev          # dev server at http://localhost:5173
+npm run build        # production build → dist/
+npm run preview      # preview production build
 ```
 
 ---
 
 ## Docker
 
-Многоэтапная сборка: Vite-билд на `node:20-alpine` → раздача через `nginx:alpine`.
+Multi-stage build: Vite build on `node:20-alpine` → served via `nginx:alpine`.
 
 ```bash
-# Сборка образа
+# Build image
 docker build \
   --build-arg VITE_API_URL=https://api.replai.app \
   -t replai-frontend:latest .
 
-# Запуск
+# Run
 docker run -d -p 80:80 replai-frontend:latest
 ```
 
-Nginx настроен на SPA-fallback (`try_files $uri /index.html`) — клиентский роутинг работает при прямых переходах.
+Nginx is configured with SPA fallback (`try_files $uri /index.html`) — client-side routing works correctly on direct URL access.
 
-Для продакшена используйте `docker-compose.yml` из корневого репозитория — `VITE_API_URL` передаётся как `build.args`.
+For production use the `docker-compose.yml` from the root repository — `VITE_API_URL` is passed as `build.args`.
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 src/
-├── api/             HTTP-клиенты (Axios instances)
+├── api/             HTTP clients (Axios instances)
 │   ├── http.ts      Axios + Bearer token interceptor
-│   ├── auth.ts      Регистрация, логин, верификация
-│   └── bot.ts       Конфиг бота, файлы, интеграции
+│   ├── auth.ts      Registration, login, email verification
+│   └── bot.ts       Bot config, files, integrations
 ├── stores/
-│   └── auth.ts      Pinia store — JWT в localStorage
+│   └── auth.ts      Pinia store — JWT in localStorage
 ├── views/
 │   ├── auth/        LoginView, RegisterView, VerifyEmailView
 │   └── dashboard/   DashboardView, LeadsView, AutomationView,
@@ -137,6 +137,6 @@ src/
 
 ---
 
-## Контакты
+## Contact
 
 Email: [ksulaimanov.dev@gmail.com](mailto:ksulaimanov.dev@gmail.com) · Telegram: [@ksulaimanov](https://t.me/ksulaimanov)
